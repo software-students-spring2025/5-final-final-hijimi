@@ -1,0 +1,16 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo-container
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb/init.js:/docker-entrypoint-initdb.d/init.js
+
+  recommender:
+    build:
+      context: ./recommender
+    container_name: recommender
+    depends_on:
+      - mongo
