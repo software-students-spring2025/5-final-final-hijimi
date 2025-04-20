@@ -6,11 +6,10 @@
 [![API CI/CD](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/api.yml/badge.svg)](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/api.yml)
 [![Frontend CI/CD](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/frontend.yml/badge.svg)](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/frontend.yml)
 
-**Replace this description** with a plain-language description of your project.
 
 ## Team Members
 
-*   [Your Name](https://github.com/<YOUR_USERNAME>)
+*   [Xingjian Zhang](https://github.com/ScottZXJ123)
 *   [Teammate Name](https://github.com/<TEAMMATE_USERNAME>)
 
 ## Subsystems
