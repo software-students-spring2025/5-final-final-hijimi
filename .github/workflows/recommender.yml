@@ -26,11 +26,21 @@ jobs:
         run: |
           pip install -r requirements.txt
 
-      - name: Run unit tests
+      - name: Run unit tests with coverage
         working-directory: recommender
         run: |
-          python test_model.py
+          pytest --cov=. --cov-report=term-missing
 
+      - name: Check formatting with black
+        working-directory: recommender
+        run: |
+          black . --check --diff
+
+      - name: Check linting with flake8
+        working-directory: recommender
+        run: |
+          flake8 .
+          
       - name: Build Docker image
         working-directory: recommender
         run: |
