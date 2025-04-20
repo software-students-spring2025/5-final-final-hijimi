@@ -28,7 +28,8 @@ jobs:
 
       - name: Test MongoDB is running
         run: |
-          docker exec test-mongo mongo --eval 'db.stats()'
+          docker exec test-mongo mongosh --eval 'db.stats()'
+
 
       - name: Show container logs for debug
         if: failure()
