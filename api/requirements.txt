@@ -1,0 +1,5 @@
+fastapi>=0.70.0
+uvicorn[standard]>=0.15.0
+pymongo[srv]>=4.0.0 # [srv] extra for DNS seedlist connection format (mongodb+srv://)
+python-dotenv>=0.19.0 # For loading .env files (optional, useful locally)
+# bson>=0.5.10 # Removed: Conflicts with pymongo's bson implementation 

@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>E-commerce Recommendations</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        h1, h2 { color: #333; }
+        #recommendations, #products { margin-top: 15px; padding: 10px; border: 1px solid #eee; border-radius: 5px; background-color: #f9f9f9; }
+        ul { list-style: none; padding: 0; }
+        li { margin-bottom: 8px; padding: 5px; border-bottom: 1px dashed #ddd; }
+        button { padding: 8px 15px; margin-top: 10px; cursor: pointer; }
+        input[type="text"] { padding: 8px; margin-right: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Product Recommendations</h1>
+
+    <div>
+        <label for="userId">Enter User ID:</label>
+        <input type="text" id="userId" value="user1">
+        <button onclick="fetchRecommendations()">Get Recommendations</button>
+    </div>
+
+    <div id="recommendations">
+        <h2>Recommendations for <span id="displayUserId">...</span></h2>
+        <ul id="recommendationList"></ul>
+        <p id="recommendationMessage"></p>
+    </div>
+
+    <hr style="margin: 20px 0;">
+
+    <div id="products">
+        <h2>Available Products</h2>
+        <button onclick="fetchAllProducts()">Load Products</button>
+        <ul id="productList"></ul>
+         <p id="productMessage"></p>
+    </div>
+
+    <script>
+        // Use the API service name or external URL depending on deployment
+        // If running via docker-compose, this might be http://localhost:8000 if mapped
+        // If deployed, it will be the public URL of the API gateway/service
+        const API_BASE_URL = 'http://localhost:8000'; // API running on host port 8000
+
+        async function fetchRecommendations() {
+            const userId = document.getElementById('userId').value;
+            const listElement = document.getElementById('recommendationList');
+            const messageElement = document.getElementById('recommendationMessage');
+            const userIdSpan = document.getElementById('displayUserId');
+            
+            listElement.innerHTML = '<li>Loading...</li>';
+            messageElement.textContent = '';
+            userIdSpan.textContent = userId;
+
+            try {
+                const response = await fetch(`${API_BASE_URL}/recommendations/${userId}`);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                const data = await response.json();
+                
+                listElement.innerHTML = ''; // Clear loading/previous
+                if (data.recommendations && data.recommendations.length > 0) {
+                    data.recommendations.forEach(product => {
+                        const li = document.createElement('li');
+                        li.textContent = `${product.name} (${product.category}) - $${product.price}`;
+                        listElement.appendChild(li);
+                    });
+                } else {
+                    messageElement.textContent = data.message || 'No recommendations found.';
+                }
+            } catch (error) {
+                console.error('Error fetching recommendations:', error);
+                listElement.innerHTML = '';
+                messageElement.textContent = 'Failed to load recommendations. Check console for details.';
+            }
+        }
+
+        async function fetchAllProducts() {
+             const listElement = document.getElementById('productList');
+             const messageElement = document.getElementById('productMessage');
+             listElement.innerHTML = '<li>Loading...</li>';
+             messageElement.textContent = '';
+
+             try {
+                 const response = await fetch(`${API_BASE_URL}/products`);
+                 if (!response.ok) {
+                     throw new Error(`HTTP error! status: ${response.status}`);
+                 }
+                 const products = await response.json();
+                 
+                 listElement.innerHTML = ''; // Clear loading/previous
+                 if (products && products.length > 0) {
+                     products.forEach(product => {
+                         const li = document.createElement('li');
+                         li.textContent = `${product.name} (${product.category}) - ID: ${product._id.$oid || product._id}`; // Handle ObjectId format
+                         listElement.appendChild(li);
+                     });
+                 } else {
+                     messageElement.textContent = 'No products found.';
+                 }
+             } catch (error) {
+                 console.error('Error fetching products:', error);
+                 listElement.innerHTML = '';
+                 messageElement.textContent = 'Failed to load products. Check console for details.';
+             }
+        }
+
+        // Optionally, fetch recommendations for the default user on load
+        // window.onload = () => fetchRecommendations();
+    </script>
+</body>
+</html> 

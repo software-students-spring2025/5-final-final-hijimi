@@ -1,0 +1,16 @@
+{
+  "products": [
+    {"_id": "prod1", "name": "Laptop", "category": "Electronics", "price": 1200},
+    {"_id": "prod2", "name": "Keyboard", "category": "Electronics", "price": 75},
+    {"_id": "prod3", "name": "Coffee Mug", "category": "Home Goods", "price": 15}
+  ],
+  "users": [
+    {"_id": "user1", "name": "Alice", "preferences": ["Electronics"]},
+    {"_id": "user2", "name": "Bob", "preferences": ["Home Goods"]}
+  ],
+  "interactions": [
+    {"user_id": "user1", "product_id": "prod1", "type": "view"},
+    {"user_id": "user1", "product_id": "prod2", "type": "purchase"},
+    {"user_id": "user2", "product_id": "prod3", "type": "purchase"}
+  ]
+} 
