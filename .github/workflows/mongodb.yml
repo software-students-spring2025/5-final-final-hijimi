@@ -27,11 +27,16 @@ jobs:
       - name: Run MongoDB container
         run: |
           docker run -d --name test-mongo -p 27017:27017 test-mongodb
-          sleep 10  # 给 MongoDB 启动时间
+          sleep 10
 
       - name: Test MongoDB is running
         run: |
           docker exec test-mongo mongo --eval 'db.stats()'
+
+      - name: Show container logs for debug
+        if: failure()
+        run: |
+          docker logs test-mongo
 
       - name: Clean up
         if: always()
