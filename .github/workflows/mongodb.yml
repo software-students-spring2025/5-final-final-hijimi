@@ -1,0 +1,39 @@
+name: MongoDB Build and Run Test
+
+on:
+  push:
+    paths:
+      - 'mongodb/**'
+  pull_request:
+    paths:
+      - 'mongodb/**'
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build MongoDB Docker image
+        run: |
+          cd mongodb
+          docker build -t test-mongodb .
+
+      - name: Run MongoDB container
+        run: |
+          docker run -d --name test-mongo -p 27017:27017 test-mongodb
+          sleep 10  # 给 MongoDB 启动时间
+
+      - name: Test MongoDB is running
+        run: |
+          docker exec test-mongo mongo --eval 'db.stats()'
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm -f test-mongo || true
