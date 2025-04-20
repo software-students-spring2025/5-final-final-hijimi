@@ -8,9 +8,10 @@ services:
     volumes:
       - ./mongodb/init.js:/docker-entrypoint-initdb.d/init.js
 
-  recommender:
+  api:
     build:
-      context: ./recommender
-    container_name: recommender
+      context: ./api
+    ports:
+      - "5000:5000"
     depends_on:
       - mongo
