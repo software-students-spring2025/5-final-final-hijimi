@@ -1,12 +1,18 @@
 import os
 from pymongo import MongoClient
 import pandas as pd
+import json
+from bson import json_util
 # Import necessary libraries for your chosen recommendation algorithm (e.g., scikit-learn)
 
 # Connect to MongoDB
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://localhost:27017/mydatabase')
 client = MongoClient(MONGO_URI)
 db = client.get_database()
+
+# Helper function to parse MongoDB BSON to JSON-serializable format
+def parse_json(data):
+    return json.loads(json_util.dumps(data))
 
 # --- Placeholder for Recommendation Logic --- 
 # This is where you'll implement your recommendation algorithm.
@@ -23,7 +29,7 @@ def get_recommendations(user_id: str, n_recommendations: int = 5):
             print(f"No interaction data found for user {user_id}. Returning generic recommendations.")
             # Return popular items or other fallback recommendations
             popular_products = list(db.products.find().limit(n_recommendations))
-            return popular_products 
+            return parse_json(popular_products)
 
         # --- Add your recommendation algorithm here --- 
         # Based on interactions, calculate or retrieve recommendations.
@@ -33,18 +39,23 @@ def get_recommendations(user_id: str, n_recommendations: int = 5):
         
         # If fewer recommendations found than requested, add popular items
         if len(recommendations) < n_recommendations:
-             popular_products = list(db.products.find({'_id': {'$nin': product_ids}}).limit(n_recommendations - len(recommendations)))
+             additional_needed = n_recommendations - len(recommendations)
+             recommended_ids = [r['_id'] for r in recommendations]
+             popular_products = list(db.products.find({
+                 '_id': {'$nin': recommended_ids + product_ids}
+             }).limit(additional_needed))
              recommendations.extend(popular_products)
 
         print(f"Generated {len(recommendations)} recommendations for user {user_id}")
-        return recommendations
+        # Convert MongoDB cursor to JSON-serializable format
+        return parse_json(recommendations)
 
     except Exception as e:
         print(f"Error generating recommendations for user {user_id}: {e}")
         # Fallback: return popular items
         try:
             popular_products = list(db.products.find().limit(n_recommendations))
-            return popular_products
+            return parse_json(popular_products)
         except Exception as db_e:
             print(f"Error fetching popular products: {db_e}")
             return [] # Return empty list if DB fails

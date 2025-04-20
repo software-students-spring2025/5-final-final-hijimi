@@ -13,10 +13,14 @@ import json
 sys.path.append(os.path.join(os.path.dirname(__file__), '../recommender'))
 try:
     # Attempt to import the recommendation function
-    from recommender import get_recommendations
+    from recommender import get_recommendations, parse_json
 except ImportError:
     # Provide a fallback if the recommender module isn't found or has issues
     print("Warning: Could not import get_recommendations from recommender module.")
+    # Define parse_json if not imported from recommender
+    def parse_json(data):
+        return json.loads(json_util.dumps(data))
+
     def get_recommendations(user_id: str, n_recommendations: int = 5):
         print("Fallback: Recommender not available.")
         # Simple fallback: return empty list or generic popular items from DB if accessible
@@ -62,10 +66,6 @@ MONGO_URI = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/mydatabase')
 client = MongoClient(MONGO_URI)
 db = client.get_database()
 
-def parse_json(data):
-    # Convert MongoDB BSON to JSON serializable format
-    return json.loads(json_util.dumps(data))
-
 @app.get("/")
 def read_root():
     return {"message": "Welcome to the E-commerce Recommendation API"}
@@ -85,13 +85,10 @@ def get_user_recommendations(user_id: str, limit: int = 5):
              if not popular_products:
                   return {"user_id": user_id, "recommendations": [], "message": "No popular products found."}
              # Ensure fallback popular products are also parsed
-             return {"user_id": user_id, "recommendations": parse_json(popular_products)}
+             popular_products_json = parse_json(popular_products)
+             return {"user_id": user_id, "recommendations": popular_products_json}
 
-        # Convert BSON ObjectId to string for JSON response
-        # The get_recommendations function should ideally return JSON-serializable data
-        # If it returns raw pymongo results, parse_json is needed here.
-        # Assuming get_recommendations now returns parsed data or simple lists/dicts
-        # return {"user_id": user_id, "recommendations": parse_json(recommendations)}
+        # The get_recommendations function now returns parsed JSON data
         return {"user_id": user_id, "recommendations": recommendations} 
 
     except Exception as e:
