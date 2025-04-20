@@ -1,12 +1,9 @@
 name: MongoDB Build and Run Test
 
+# mongodb.yml
 on:
   push:
-    paths:
-      - 'mongodb/**'
   pull_request:
-    paths:
-      - 'mongodb/**'
 
 jobs:
   build-and-test:
