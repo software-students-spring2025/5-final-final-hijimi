@@ -2,7 +2,7 @@ name: Recommender CI/CD
 
 on:
   push:
-    branches: [ push, pull_request ]
+    branches: [ main , hy ]
     paths:
       - "recommendation_service/**"
       - ".github/workflows/recommendation.yml"

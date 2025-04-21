@@ -2,7 +2,7 @@ name: Database CI/CD
 
 on:
   push:
-    branches: [ push, pull_request ]
+    branches: [ main , hy ]
     paths:
       - "database/**"
       - ".github/workflows/database.yml"
