@@ -1,0 +1,30 @@
+version: "3.9"
+
+services:
+  mongodb:
+    build: ./database
+    environment:
+      MONGO_INITDB_DATABASE: ecomm
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+  recommender:
+    build: ./recommendation-service
+    environment:
+      - MONGO_URL=mongodb://mongodb:27017/ecomm
+    depends_on: [mongodb]
+    ports:
+      - "8001:8000"
+
+  api:
+    build: ./api-service
+    environment:
+      - RECOMMENDER_URL=http://recommender:8000
+    depends_on: [recommender]
+    ports:
+      - "8000:8000"
+
+volumes:
+  mongo-data:

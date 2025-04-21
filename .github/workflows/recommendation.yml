@@ -1,0 +1,52 @@
+name: Recommender CI/CD
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - "recommendation_service/**"
+      - ".github/workflows/recommendation.yml"
+
+jobs:
+  test-build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: actions/setup-python@v5
+      with:
+        python-version: "3.11"
+
+    - name: Install deps & run tests
+      run: |
+        cd recommendation_service
+        pip install -r requirements.txt
+        pip install pytest pytest-cov
+        pytest --cov=src --cov-report=xml
+
+    - uses: codecov/codecov-action@v4
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        username: your-docker-hub-username
+        password: ${{ secrets.DOCKERHUB_PAT }}
+
+    - name: Build & push recommender image
+      uses: docker/build-push-action@v5
+      with:
+        context: ./recommendation_service
+        push: true
+        tags: your-docker-hub-username/ecomm-recommender:${{ github.sha }}
+
+    - name: Deploy to DigitalOcean App Platform
+      uses: digitalocean/app_action@v1.1.5
+      with:
+        app_name: ecomm-recommender
+        token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        images: |
+          - component_name: recommender
+            image: your-docker-hub-username/ecomm-recommender:${{ github.sha }}
