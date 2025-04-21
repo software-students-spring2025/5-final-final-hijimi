@@ -254,6 +254,141 @@
         .hidden {
             display: none;
         }
+        
+        /* Product Detail Modal Styles */
+        .modal-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 20;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .modal-backdrop.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+        
+        .product-modal {
+            background-color: white;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-backdrop.active .product-modal {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 24px;
+            border-bottom: 1px solid var(--grey);
+        }
+        
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--grey-dark);
+        }
+        
+        .modal-body {
+            padding: 24px;
+        }
+        
+        .product-detail-img {
+            height: 200px;
+            background-color: var(--primary-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 4rem;
+            border-radius: var(--radius);
+            margin-bottom: 24px;
+        }
+        
+        .product-detail-info {
+            margin-bottom: 24px;
+        }
+        
+        .product-detail-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+        
+        .product-detail-meta {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 16px;
+        }
+        
+        .product-detail-price {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--secondary);
+        }
+        
+        .product-detail-category {
+            display: inline-block;
+            background-color: var(--primary-light);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+        
+        .product-description {
+            line-height: 1.8;
+            color: #555;
+        }
+        
+        .product-features {
+            margin-top: 24px;
+        }
+        
+        .feature-list {
+            list-style: none;
+            margin-top: 12px;
+        }
+        
+        .feature-item {
+            position: relative;
+            padding-left: 28px;
+            margin-bottom: 8px;
+        }
+        
+        .feature-item:before {
+            content: "✓";
+            position: absolute;
+            left: 0;
+            color: var(--primary);
+            font-weight: bold;
+        }
+        
+        .modal-actions {
+            margin-top: 24px;
+            display: flex;
+            gap: 12px;
+        }
     </style>
 </head>
 <body>
@@ -308,6 +443,19 @@
         </section>
     </div>
 
+    <!-- Add Product Detail Modal -->
+    <div id="productModal" class="modal-backdrop">
+        <div class="product-modal">
+            <div class="modal-header">
+                <h3>Product Details</h3>
+                <button id="closeModal" class="modal-close">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="productDetailContent"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
         // API URL 
         const API_BASE_URL = 'http://localhost:8000';
@@ -326,10 +474,16 @@
         const recommendationError = document.getElementById('recommendationError');
         const productError = document.getElementById('productError');
         
+        // DOM elements for modal
+        const productModal = document.getElementById('productModal');
+        const closeModal = document.getElementById('closeModal');
+        const productDetailContent = document.getElementById('productDetailContent');
+        
         // Function to create a product card
         function createProductCard(product) {
             const card = document.createElement('div');
             card.className = 'product-card';
+            card.dataset.productId = product._id;
             
             // Generate product icon based on category
             let productIcon = '📦';
@@ -347,7 +501,82 @@
                 </div>
             `;
             
+            // Add click event to show product details
+            card.addEventListener('click', () => showProductDetails(product));
+            
             return card;
+        }
+        
+        // Function to show product details in modal
+        function showProductDetails(product) {
+            // Generate product icon based on category
+            let productIcon = '📦';
+            if (product.category === 'Electronics') productIcon = '🔌';
+            else if (product.category === 'Home Goods') productIcon = '🏠';
+            else if (product.category === 'Clothing') productIcon = '👕';
+            else if (product.category === 'Books') productIcon = '📚';
+            
+            // Generate random description and features if not available
+            const description = product.description || 
+                `This premium ${product.category.toLowerCase()} item offers excellent quality and value. Perfect for everyday use.`;
+            
+            // Create features based on category
+            let features = [];
+            if (product.category === 'Electronics') {
+                features = ['High performance', 'Energy efficient', 'Durable build quality'];
+            } else if (product.category === 'Home Goods') {
+                features = ['Premium materials', 'Modern design', 'Easy to clean'];
+            } else if (product.category === 'Clothing') {
+                features = ['Comfortable fit', 'Machine washable', 'High-quality fabric'];
+            } else if (product.category === 'Books') {
+                features = ['Engaging content', 'Well-reviewed', 'Perfect gift'];
+            } else {
+                features = ['High quality', 'Great value', 'Customer favorite'];
+            }
+            
+            // Create feature list HTML
+            const featureListHTML = features.map(feature => 
+                `<li class="feature-item">${feature}</li>`
+            ).join('');
+            
+            // Set modal content
+            productDetailContent.innerHTML = `
+                <div class="product-detail-img">${productIcon}</div>
+                <div class="product-detail-info">
+                    <h2 class="product-detail-title">${product.name}</h2>
+                    <div class="product-detail-meta">
+                        <div class="product-detail-price">$${product.price}</div>
+                        <div class="product-detail-category">${product.category}</div>
+                    </div>
+                    <p class="product-description">${description}</p>
+                    <div class="product-features">
+                        <h4>Features</h4>
+                        <ul class="feature-list">
+                            ${featureListHTML}
+                        </ul>
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn">Add to Cart</button>
+                    <button class="btn btn-secondary" id="closeModalBtn">Close</button>
+                </div>
+            `;
+            
+            // Add event listener to the Close button
+            document.getElementById('closeModalBtn').addEventListener('click', closeProductModal);
+            
+            // Show modal
+            productModal.classList.add('active');
+            
+            // Prevent body scrolling when modal is open
+            document.body.style.overflow = 'hidden';
+        }
+        
+        // Function to close product modal
+        function closeProductModal() {
+            productModal.classList.remove('active');
+            // Re-enable body scrolling
+            document.body.style.overflow = '';
         }
 
         // Fetch recommendations
@@ -439,6 +668,21 @@
         // Event listeners
         recommendationBtn.addEventListener('click', fetchRecommendations);
         loadProductsBtn.addEventListener('click', fetchAllProducts);
+        closeModal.addEventListener('click', closeProductModal);
+        
+        // Close modal when clicking outside
+        productModal.addEventListener('click', function(e) {
+            if (e.target === productModal) {
+                closeProductModal();
+            }
+        });
+        
+        // Close modal with ESC key
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape' && productModal.classList.contains('active')) {
+                closeProductModal();
+            }
+        });
         
         // Allow Enter key to trigger recommendation search
         userIdInput.addEventListener('keypress', function(e) {
