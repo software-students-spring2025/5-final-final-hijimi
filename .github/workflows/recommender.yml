@@ -2,11 +2,8 @@ name: Recommender CI
 
 on:
   push:
-    paths:
-      - "recommender/**"
   pull_request:
-    paths:
-      - "recommender/**"
+
 
 jobs:
   test-and-build:
