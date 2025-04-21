@@ -1,14 +1,19 @@
 from flask import Flask, jsonify
+from flask_cors import CORS
 from recommender_client import load_interaction_data, recommend_popular
 
 app = Flask(__name__)
+CORS(app)  # 允许前端跨域请求
 
 
 @app.route("/recommend/<user_id>", methods=["GET"])
 def recommend(user_id):
-    df = load_interaction_data()
-    recommendations = recommend_popular(df, user_id)
-    return jsonify({"user_id": user_id, "recommendations": recommendations})
+    try:
+        df = load_interaction_data()
+        recommendations = recommend_popular(df, user_id)
+        return jsonify({"user_id": user_id, "recommendations": recommendations})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 if __name__ == "__main__":

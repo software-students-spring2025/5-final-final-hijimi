@@ -9,7 +9,14 @@ def load_interaction_data():
     return pd.DataFrame(interactions)
 
 
-def recommend_popular(df, user_id, top_n=3):
-    purchase_df = df[df["action"] == "purchase"]
-    top_products = purchase_df["product_id"].value_counts().head(top_n).index.tolist()
-    return top_products
+def recommend_popular(df, user_id, top_n=5):
+    seen_products = df[df["user_id"] == user_id]["product_id"].tolist()
+    popular = (
+        df[~df["product_id"].isin(seen_products)]
+        .groupby("product_id")
+        .size()
+        .sort_values(ascending=False)
+        .head(top_n)
+        .index.tolist()
+    )
+    return popular

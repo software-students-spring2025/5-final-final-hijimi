@@ -1,9 +1,9 @@
 import pandas as pd
-from model import recommend_popular
+from model import recommend_by_user_history
 from load_data import load_interaction_data
 
 
-def test_recommend_popular():
+def test_recommend_by_user_history():
     df = pd.DataFrame(
         [
             {"user_id": "u1", "product_id": "p1", "action": "purchase"},
@@ -11,7 +11,7 @@ def test_recommend_popular():
             {"user_id": "u2", "product_id": "p2", "action": "purchase"},
         ]
     )
-    result = recommend_popular(df, "u1", top_n=1)
+    result = recommend_by_user_history(df, "u1")
     assert result == ["p1"]
 
 
@@ -22,7 +22,7 @@ def test_main_recommend_call():
             {"user_id": "u1", "product_id": "p2", "action": "purchase"},
         ]
     )
-    result = recommend_popular(df, "u1", top_n=2)
+    result = recommend_by_user_history(df, "u1")
     assert set(result) == {"p1", "p2"}
 
 

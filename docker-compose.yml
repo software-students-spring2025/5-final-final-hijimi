@@ -15,3 +15,13 @@ services:
       - "5000:5000"
     depends_on:
       - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    container_name: frontend
+    depends_on:
+      - api
+
