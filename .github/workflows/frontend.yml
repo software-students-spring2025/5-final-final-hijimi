@@ -59,10 +59,12 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - name: Deploy to DigitalOcean App Platform (Example)
+      - name: Set up DO CLI
         uses: digitalocean/action-doctl@v2
         with:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
+
+      - name: Deploy to DigitalOcean App Platform
         run: |
           echo "Deploying Frontend to DO... (implement specific steps)"
           # Example: Trigger a deployment update for a DO App
