@@ -10,7 +10,7 @@
 ## Team Members
 
 *   [Xingjian Zhang](https://github.com/ScottZXJ123)
-*   [Teammate Name](https://github.com/<TEAMMATE_USERNAME>)
+*   [Teammate Name](https://github.com/<TEAMMATE_USERNAME>) 
 
 ## Subsystems
 
