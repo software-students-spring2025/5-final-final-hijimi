@@ -1,10 +1,10 @@
 # E-commerce Recommendation Engine
 
 <!-- Add CI/CD Badges Here -->
-[![MongoDB CI/CD](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/mongodb.yml/badge.svg)](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/mongodb.yml)
-[![Recommender CI/CD](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/recommender.yml/badge.svg)](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/recommender.yml)
-[![API CI/CD](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/api.yml/badge.svg)](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/api.yml)
-[![Frontend CI/CD](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/frontend.yml/badge.svg)](https://github.com/<YOUR_USERNAME>/<YOUR_REPO>/actions/workflows/frontend.yml)
+[![MongoDB CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/mongodb.yml)
+[![Recommender CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml)
+[![API CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml)
+[![Frontend CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/frontend.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/frontend.yml)
 
 
 ## Team Members
@@ -21,12 +21,10 @@
 
 ## Docker Hub Images
 
-*   MongoDB: `docker pull <YOUR_DOCKERHUB_USERNAME>/ecommerce-mongodb:latest`
-*   Recommender: `docker pull <YOUR_DOCKERHUB_USERNAME>/ecommerce-recommender:latest`
-*   API: `docker pull <YOUR_DOCKERHUB_USERNAME>/ecommerce-api:latest`
-*   Frontend: `docker pull <YOUR_DOCKERHUB_USERNAME>/ecommerce-frontend:latest`
-
-*(Replace `<YOUR_DOCKERHUB_USERNAME>` with your actual Docker Hub username)*
+*   MongoDB: `docker pull scottz1234/ecommerce-mongodb:latest`
+*   Recommender: `docker pull scottz1234/ecommerce-recommender:latest`
+*   API: `docker pull scottz1234/ecommerce-api:latest`
+*   Frontend: `docker pull scottz1234/ecommerce-frontend:latest`
 
 ## Setup and Running
 
