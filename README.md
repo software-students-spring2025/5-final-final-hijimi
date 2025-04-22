@@ -1,12 +1,5 @@
 # E-commerce Recommendation Engine
 
-<!-- Add CI/CD Badges Here -->
-[![MongoDB CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/mongodb.yml)
-[![Recommender CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml)
-[![API CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml)
-[![Frontend CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/frontend.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/frontend.yml)
-
-
 ## Team Members
 
 *   [Xingjian Zhang](https://github.com/ScottZXJ123)
