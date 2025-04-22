@@ -46,6 +46,7 @@ app = FastAPI(
 # Define allowed origins (where the frontend is running)
 origins = [
     "http://localhost:8080", # Frontend origin when running locally
+    "http://localhost:8081", # Frontend running on port 8081
     "http://localhost",      # Sometimes needed depending on browser/setup
     # Add the URL of your deployed frontend on Digital Ocean later
     # "https://your-deployed-frontend-url.com", 

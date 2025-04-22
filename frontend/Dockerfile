@@ -1,12 +1,6 @@
 # Use the official Nginx image
 FROM nginx:stable-alpine
 
-# Remove the default Nginx configuration file
-RUN rm /etc/nginx/conf.d/default.conf
-
-# Copy a custom Nginx configuration for routing/proxying
-COPY nginx/default.conf /etc/nginx/conf.d/default.conf
-
 # Copy the frontend static files (HTML, CSS, JS) into the Nginx html directory
 # The default Nginx config serves files from here
 COPY index.html /usr/share/nginx/html/
