@@ -18,7 +18,7 @@ on:
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend.yml'
-
+    
 jobs:
   # Add a test job if needed (e.g., HTML linting, link checking, JS tests if using a framework)
   # test:
