@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - master
+      - xingjian1
     paths:
       - 'api/**'
       - '.github/workflows/api.yml'
@@ -14,6 +15,7 @@ on:
     branches:
       - main
       - master
+      - xingjian1
     paths:
       - 'api/**'
       - '.github/workflows/api.yml'

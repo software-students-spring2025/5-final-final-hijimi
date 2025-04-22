@@ -6,6 +6,7 @@ on:
     branches:
       - main
       - master
+      - xingjian1
     paths:
       - 'recommender/**'
       - '.github/workflows/recommender.yml'
@@ -13,6 +14,7 @@ on:
     branches:
       - main
       - master
+      - xingjian1
     paths:
       - 'recommender/**'
       - '.github/workflows/recommender.yml'
