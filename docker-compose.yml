@@ -1,0 +1,27 @@
+version: '3'
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo-container
+    ports:
+      - "27017:27017"
+    volumes:
+      - ./mongodb/init.js:/docker-entrypoint-initdb.d/init.js
+
+  api:
+    build:
+      context: ./api
+    ports:
+      - "5001:5000"
+    depends_on:
+      - mongo
+
+  frontend:
+    build:
+      context: ./frontend
+    ports:
+      - "8080:80"
+    container_name: frontend
+    depends_on:
+      - api
+
