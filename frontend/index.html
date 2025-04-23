@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>产品推荐系统</title>
+  <link
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+    rel="stylesheet"
+  />
+  <style>
+    body {
+      background-color: #f8f9fa;
+      font-family: "Segoe UI", sans-serif;
+    }
+    .container {
+      max-width: 500px;
+      margin-top: 80px;
+      background: white;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    }
+    .icon {
+      font-size: 2rem;
+      margin-right: 10px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container text-center">
+    <div class="mb-4">
+      <span class="icon">🛍️</span>
+      <h3 class="d-inline">产品推荐系统</h3>
+    </div>
+    <form id="recommendForm" class="input-group mb-3">
+      <input
+        type="text"
+        id="userId"
+        class="form-control"
+        placeholder="请输入用户 ID"
+        required
+      />
+      <button class="btn btn-primary" type="submit">获取推荐</button>
+    </form>
+    <div id="result"></div>
+  </div>
+
+  <script>
+    const form = document.getElementById("recommendForm");
+    const resultDiv = document.getElementById("result");
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById("userId").value.trim();
+      resultDiv.innerHTML = "<div class='text-secondary'>正在获取推荐...</div>";
+
+      try {
+        const res = await fetch(`http://localhost:5000/recommend/${userId}`)
+        if (!res.ok) throw new Error("无法获取数据");
+
+        const data = await res.json();
+        if (data.recommendations.length === 0) {
+          resultDiv.innerHTML = `<div class="alert alert-warning mt-3">未找到用户 <strong>${userId}</strong> 的推荐商品。</div>`;
+        } else {
+          resultDiv.innerHTML = `
+            <div class="mt-3">
+              <h6 class="text-success">为用户 <strong>${data.user_id}</strong> 推荐的商品：</h6>
+              <ul class="list-group mt-2">
+                ${data.recommendations
+                  .map(
+                    (item) => `<li class="list-group-item">${item}</li>`
+                  )
+                  .join("")}
+              </ul>
+            </div>`;
+        }
+      } catch (err) {
+        resultDiv.innerHTML = `<div class="alert alert-danger mt-3">请求失败，请检查后端是否运行或网络异常。</div>`;
+      }
+    });
+  </script>
+</body>
+</html>
