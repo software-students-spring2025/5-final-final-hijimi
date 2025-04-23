@@ -1,30 +1,86 @@
-version: "3.9"
+
+version: '3.8' # Specify docker-compose version
 
 services:
   mongodb:
-    build: ./database
+    build:
+      context: ./mongodb
+      dockerfile: Dockerfile
+    container_name: ecommerce-mongodb
     environment:
-      MONGO_INITDB_DATABASE: ecomm
-    ports:
-      - "27017:27017"
+      # These are used by the mongo image and init script
+      MONGO_INITDB_DATABASE: ${MONGO_INITDB_DATABASE:-mydatabase}
+      # Add MONGO_INITDB_ROOT_USERNAME and MONGO_INITDB_ROOT_PASSWORD here if using auth
     volumes:
-      - mongo-data:/data/db
+      - mongodb_data:/data/db # Persist data
+    ports:
+      - "27017:27017" # Map default Mongo port (optional, for external tools)
+    networks:
+      - ecommerce-network
 
   recommender:
-    build: ./recommendation-service
+    build:
+      context: ./recommender
+      dockerfile: Dockerfile
+    container_name: ecommerce-recommender
     environment:
-      - MONGO_URL=mongodb://mongodb:27017/ecomm
-    depends_on: [mongodb]
-    ports:
-      - "8001:8000"
+      MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/mydatabase}
+    volumes:
+        # Mount code for easier development (optional)
+        # - ./recommender:/app 
+      - recommender_data:/app/data # Example volume for models if needed
+    depends_on:
+      - mongodb
+    networks:
+      - ecommerce-network
+    # Note: This service currently just runs a script and exits.
+    # If it were a long-running service/API, you might add ports.
+    # For development, you might override the CMD to keep it running or use a different command.
 
   api:
-    build: ./api-service
+    build:
+      context: .
+      dockerfile: api/Dockerfile # Build from root context to access recommender code
+    container_name: ecommerce-api
     environment:
-      - RECOMMENDER_URL=http://recommender:8000
-    depends_on: [recommender]
+      MONGO_URI: ${MONGO_URI:-mongodb://mongodb:27017/mydatabase}
+      # Add other API-specific environment variables here
+    volumes:
+        # Mount code for hot-reloading during development (optional)
+        - ./api:/app/api
+        - ./recommender:/app/recommender
     ports:
-      - "8000:8000"
+      - "${API_PORT_HOST:-8000}:${API_PORT_CONTAINER:-8000}" # Map API port (e.g., 8000:8000)
+    depends_on:
+      - mongodb
+      - recommender # Depends on recommender code being present
+    networks:
+      - ecommerce-network
+    # Override command for development with hot-reloading
+    command: uvicorn api.app:app --host 0.0.0.0 --port ${API_PORT_CONTAINER:-8000} --reload --reload-dir /app/api --reload-dir /app/recommender
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: ecommerce-frontend
+    ports:
+      - "${FRONTEND_PORT_HOST:-8080}:${FRONTEND_PORT_CONTAINER:-80}" # Map frontend port (e.g., 8080:80)
+    # No direct dependency, but needs API to be useful
+    # depends_on:
+    #   - api # Uncomment if using Nginx proxy_pass to API
+    networks:
+      - ecommerce-network
+    # Add Nginx config volume if you customize Nginx (e.g., to proxy API calls)
+    # volumes:
+    #   - ./frontend/nginx.conf:/etc/nginx/conf.d/default.conf
+
+networks:
+  ecommerce-network:
+    driver: bridge
 
 volumes:
-  mongo-data:
+  mongodb_data:
+    driver: local
+  recommender_data:
+    driver: local 

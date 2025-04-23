@@ -1,0 +1,52 @@
+{
+  "products": [
+    {"_id": "prod1", "name": "Laptop", "category": "Electronics", "price": 1200, "rating": 4.8},
+    {"_id": "prod2", "name": "Keyboard", "category": "Electronics", "price": 75, "rating": 4.5},
+    {"_id": "prod3", "name": "Coffee Mug", "category": "Home Goods", "price": 15, "rating": 4.0},
+    {"_id": "prod4", "name": "Headphones", "category": "Electronics", "price": 150, "rating": 4.7},
+    {"_id": "prod5", "name": "Desk Lamp", "category": "Home Goods", "price": 35, "rating": 4.2},
+    {"_id": "prod6", "name": "Smartphone", "category": "Electronics", "price": 800, "rating": 4.6},
+    {"_id": "prod7", "name": "Throw Pillow", "category": "Home Goods", "price": 25, "rating": 3.9},
+    {"_id": "prod8", "name": "Bluetooth Speaker", "category": "Electronics", "price": 60, "rating": 4.3},
+    {"_id": "prod9", "name": "Office Chair", "category": "Furniture", "price": 175, "rating": 4.4},
+    {"_id": "prod10", "name": "Desk", "category": "Furniture", "price": 250, "rating": 4.5},
+    {"_id": "prod11", "name": "Monitor", "category": "Electronics", "price": 300, "rating": 4.7},
+    {"_id": "prod12", "name": "Mouse", "category": "Electronics", "price": 45, "rating": 4.6},
+    {"_id": "prod13", "name": "Bookshelf", "category": "Furniture", "price": 120, "rating": 4.1},
+    {"_id": "prod14", "name": "Plant Pot", "category": "Home Goods", "price": 18, "rating": 3.8},
+    {"_id": "prod15", "name": "Notebook", "category": "Stationery", "price": 10, "rating": 4.0}
+  ],
+  "users": [
+    {"_id": "user1", "name": "Alice", "preferences": ["Electronics", "Stationery"]},
+    {"_id": "user2", "name": "Bob", "preferences": ["Home Goods", "Furniture"]},
+    {"_id": "user3", "name": "Charlie", "preferences": ["Electronics", "Furniture"]},
+    {"_id": "user4", "name": "Diana", "preferences": ["Stationery", "Home Goods"]},
+    {"_id": "user5", "name": "Evan", "preferences": ["Electronics", "Home Goods"]}
+  ],
+  "interactions": [
+    {"user_id": "user1", "product_id": "prod1", "type": "view", "timestamp": "2023-05-01"},
+    {"user_id": "user1", "product_id": "prod2", "type": "purchase", "timestamp": "2023-05-02"},
+    {"user_id": "user1", "product_id": "prod4", "type": "view", "timestamp": "2023-05-03"},
+    {"user_id": "user1", "product_id": "prod15", "type": "purchase", "timestamp": "2023-05-04"},
+    
+    {"user_id": "user2", "product_id": "prod3", "type": "purchase", "timestamp": "2023-05-01"},
+    {"user_id": "user2", "product_id": "prod5", "type": "view", "timestamp": "2023-05-02"},
+    {"user_id": "user2", "product_id": "prod7", "type": "purchase", "timestamp": "2023-05-03"},
+    {"user_id": "user2", "product_id": "prod10", "type": "view", "timestamp": "2023-05-04"},
+    
+    {"user_id": "user3", "product_id": "prod6", "type": "purchase", "timestamp": "2023-05-01"},
+    {"user_id": "user3", "product_id": "prod8", "type": "view", "timestamp": "2023-05-02"},
+    {"user_id": "user3", "product_id": "prod9", "type": "purchase", "timestamp": "2023-05-03"},
+    {"user_id": "user3", "product_id": "prod11", "type": "view", "timestamp": "2023-05-04"},
+    
+    {"user_id": "user4", "product_id": "prod14", "type": "purchase", "timestamp": "2023-05-01"},
+    {"user_id": "user4", "product_id": "prod15", "type": "view", "timestamp": "2023-05-02"},
+    {"user_id": "user4", "product_id": "prod3", "type": "purchase", "timestamp": "2023-05-03"},
+    {"user_id": "user4", "product_id": "prod5", "type": "view", "timestamp": "2023-05-04"},
+    
+    {"user_id": "user5", "product_id": "prod4", "type": "purchase", "timestamp": "2023-05-01"},
+    {"user_id": "user5", "product_id": "prod8", "type": "view", "timestamp": "2023-05-02"},
+    {"user_id": "user5", "product_id": "prod12", "type": "purchase", "timestamp": "2023-05-03"},
+    {"user_id": "user5", "product_id": "prod5", "type": "view", "timestamp": "2023-05-04"}
+  ]
+} 
