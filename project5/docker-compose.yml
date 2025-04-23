@@ -1,0 +1,49 @@
+# docker-compose.yml
+version: '3.8'
+
+services:
+  database:
+    build:
+      context: ./database
+    environment:
+      MONGO_INITDB_DATABASE: ecommerce
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+    networks:
+      - app-network
+
+  recommendation-service:
+    build:
+      context: ./recommendation-service
+    environment:
+      MONGO_URI: mongodb://database:27017
+    ports:
+      - "8000:8000"
+    depends_on:
+      - database
+    networks:
+      - app-network
+
+  api-service:
+    build:
+      context: ./api-service
+    environment:
+      MONGO_URI: mongodb://database:27017
+      REC_SERVICE_URL: http://recommendation-service:8000
+      JWT_SECRET: ${JWT_SECRET:-your_secret_key_here}
+    ports:
+      - "8080:8080"
+    depends_on:
+      - database
+      - recommendation-service
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  mongo-data:
