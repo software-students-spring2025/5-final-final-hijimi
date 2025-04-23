@@ -1,60 +1,44 @@
-# .github/workflows/mongodb.yml 
-name: MongoDB CI/CD
 
+name: MongoDB Build and Run Test
+
+# mongodb.yml
 on:
   push:
-    branches:
-      - main
-      - master
-      - xingjian1
-    paths:
-      - 'mongodb/**'
-      - '.github/workflows/mongodb.yml'
   pull_request:
-    branches:
-      - main
-      - master
-      - xingjian1
-    paths:
-      - 'mongodb/**'
-      - '.github/workflows/mongodb.yml'
 
 jobs:
-  build-and-push:
+  build-and-test:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout code
+      - name: Checkout repository
         uses: actions/checkout@v3
 
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
-      - name: Login to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }} # Needs to be configured in GitHub Secrets
-          password: ${{ secrets.DOCKERHUB_TOKEN }}    # Needs to be configured in GitHub Secrets
+      - name: Build MongoDB Docker image
+        run: |
+          cd mongodb
+          docker build -t test-mongodb .
 
-      - name: Build and push MongoDB image
-        uses: docker/build-push-action@v4
-        with:
-          context: ./mongodb
-          file: ./mongodb/Dockerfile
-          push: ${{ github.event_name == 'push' }} # Push only on push events to main/master
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-mongodb:latest # Replace with your Docker Hub username
-          cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-mongodb:buildcache
-          cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-mongodb:buildcache,mode=max
+      - name: Run MongoDB container
+        run: |
+          docker run -d --name test-mongo -p 27017:27017 test-mongodb
+          sleep 10
 
-  # Placeholder for deployment - Deploying MongoDB might involve:
-  # - Using a managed MongoDB service on DigitalOcean
-  # - Setting up a MongoDB instance on a Droplet (less common via simple Docker push)
-  # This step assumes you might deploy this custom image to a container registry or orchestrator on DO.
-  # deploy:
-  #   needs: build-and-push
-  #   runs-on: ubuntu-latest
-  #   if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
-  #   steps:
-  #     - name: Deploy to DigitalOcean (Placeholder)
-  #       # Add steps to deploy using doctl, SSH, K8s manifests, etc.
-  #       # This will highly depend on your DO infrastructure setup.
-  #       run: echo "Deploying MongoDB (custom image) to DO... (implement specific steps)" 
+      - name: Test MongoDB is running
+        run: |
+          docker exec test-mongo mongosh --eval 'db.stats()'
+
+
+      - name: Show container logs for debug
+        if: failure()
+        run: |
+          docker logs test-mongo
+
+      - name: Clean up
+        if: always()
+        run: |
+          docker rm -f test-mongo || true
+
