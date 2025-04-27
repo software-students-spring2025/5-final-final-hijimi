@@ -27,6 +27,9 @@ ENV PYTHONPATH="/app:${PYTHONPATH}"
 # It uses 'mongodb' as the hostname, expecting it to be the service name in Docker Compose/Kubernetes
 ENV MONGO_URI="mongodb://mongodb:27017/mydatabase"
 
+
+
+
 # Make port 8000 available (as specified in docker-compose)
 EXPOSE 8000
 

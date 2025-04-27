@@ -3,7 +3,12 @@
 ## Team Members
 
 *   [Xingjian Zhang](https://github.com/ScottZXJ123)
-*   [Yukun Dong](https://github.com/abccdyk)
+*   [Hao Yang](https://github.com/Hao-Yang-Hao)
+## Subsystems
+[![API CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml)
+[![Recommender CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml)
+[![Frontend CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/frontend.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/frontend.yml)
+[![MongoDB CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/mongodb.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/mongodb.yml)
 
 ## Subsystems
 
