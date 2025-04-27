@@ -61,25 +61,51 @@ class RecommendationEngine:
         ]
         return user_interactions["product_id"].tolist()
 
-    def get_category_products(self, categories, exclude_product_ids=None):
-        """Get products from specific categories, excluding any in the exclude list"""
+    def get_category_products(self, categories, exclude_product_ids=None, brand=None):
+        """Get products from specific categories, excluding any in the exclude list
+        
+        Args:
+            categories (list): List of categories to match products against
+            exclude_product_ids (list, optional): List of product IDs to exclude. Defaults to None.
+            brand (str, optional): Filter by brand name. Defaults to None.
+            
+        Returns:
+            list: List of matching product dictionaries sorted by rating
+        """
         if exclude_product_ids is None:
             exclude_product_ids = []
 
         if self.products_df is None or self.products_df.empty:
             return []
 
-        # Filter by category and exclude already interacted products
-        filtered_df = self.products_df[
-            (self.products_df["category"].isin(categories))
-            & (~self.products_df["_id"].isin(exclude_product_ids))
-        ]
-
-        # Sort by rating if available, otherwise by price (descending)
-        if "rating" in filtered_df.columns:
-            filtered_df = filtered_df.sort_values("rating", ascending=False)
-
-        return filtered_df.to_dict("records")
+        # Create a filter for products that have any of the requested categories
+        # Check if the product's categories list contains any of the requested categories
+        # This handles the new schema where categories is a list instead of a single value
+        filtered_products = []
+        
+        for _, product in self.products_df.iterrows():
+            # Skip products that are in the exclude list
+            if product["_id"] in exclude_product_ids:
+                continue
+                
+            # Skip products that don't match the brand filter (if provided)
+            if brand and product.get("brand") != brand:
+                continue
+                
+            # Check if any of the requested categories are in the product's categories
+            if "categories" in product:
+                product_categories = product["categories"]
+                # If any requested category matches any product category, include this product
+                if any(category in product_categories for category in categories):
+                    filtered_products.append(product.to_dict())
+            # Fallback for old schema with single "category" field
+            elif "category" in product and product["category"] in categories:
+                filtered_products.append(product.to_dict())
+                
+        # Sort by rating (descending)
+        filtered_products.sort(key=lambda x: x.get("rating", 0), reverse=True)
+        
+        return filtered_products
 
     def get_similar_users(self, user_id, n=2):
         """Find similar users based on preferences and interactions"""
@@ -119,8 +145,8 @@ class RecommendationEngine:
         similar_users.sort(key=lambda x: x["similarity"], reverse=True)
         return similar_users[:n]
 
-    def get_recommended_products(self, user_id, n_recommendations=5):
-        """Get product recommendations for a user"""
+    def get_recommended_products(self, user_id, n_recommendations=5, brand_filter=None):
+        """Get product recommendations for a user with optional brand filtering"""
         # Already interacted products - exclude from new recommendations
         interacted_product_ids = self.get_user_interactions(user_id)
 
@@ -131,7 +157,7 @@ class RecommendationEngine:
         category_recommendations = []
         if preferred_categories:
             category_recommendations = self.get_category_products(
-                preferred_categories, interacted_product_ids
+                preferred_categories, interacted_product_ids, brand_filter
             )
 
         # Recommendation strategy 2: Get products that similar users have interacted with
@@ -155,13 +181,14 @@ class RecommendationEngine:
             if product_id not in interacted_product_ids
         ]
 
-        # Get full product details
+        # Get full product details for the most common products with brand filtering if needed
         if most_common_products:
-            similar_user_recommendations = [
-                product
-                for product in self.products_df.to_dict("records")
-                if product["_id"] in most_common_products
-            ]
+            for product in self.products_df.to_dict("records"):
+                if product["_id"] in most_common_products:
+                    # Apply brand filter if specified
+                    if brand_filter and product.get("brand") != brand_filter:
+                        continue
+                    similar_user_recommendations.append(product)
 
         # Combine recommendations, prioritizing similar user recommendations
         combined_recommendations = []
@@ -187,12 +214,20 @@ class RecommendationEngine:
         # If still not enough, add popular products (highest rated)
         remaining_slots = n_recommendations - len(combined_recommendations)
         if remaining_slots > 0:
-            popular_products = []
-            if "rating" in self.products_df.columns:
-                popular_df = self.products_df.sort_values("rating", ascending=False)
-                popular_products = popular_df.to_dict("records")
-            else:
-                popular_products = self.products_df.to_dict("records")
+            # Sort by rating if available, but also apply brand filter if needed
+            filtered_products = []
+            for product in self.products_df.to_dict("records"):
+                # Apply brand filter if specified
+                if brand_filter and product.get("brand") != brand_filter:
+                    continue
+                filtered_products.append(product)
+            
+            # Sort the filtered products by rating
+            popular_products = sorted(
+                filtered_products, 
+                key=lambda x: x.get("rating", 0), 
+                reverse=True
+            )
 
             # Add only the products not already in combined_recommendations
             added = 0
@@ -210,20 +245,163 @@ class RecommendationEngine:
                     added += 1
 
         return combined_recommendations[:n_recommendations]
+        
+    def search_products(self, query_terms, brand=None, sort_by="rating", limit=20):
+        """
+        Search for products matching the query terms across multiple fields.
+        
+        Args:
+            query_terms (list): List of search terms to match against product data
+            brand (str, optional): Filter by brand name. Defaults to None.
+            sort_by (str, optional): Field to sort results by. Defaults to "rating".
+            limit (int, optional): Maximum number of results to return. Defaults to 20.
+            
+        Returns:
+            list: List of matching product dictionaries
+        """
+        if not query_terms or not self.products_df.any().any():
+            return []
+        
+        # Convert all terms to lowercase for case-insensitive matching
+        query_terms = [term.lower() for term in query_terms]
+        
+        # Score each product based on how well it matches the query terms
+        scored_products = []
+        
+        for _, product in self.products_df.iterrows():
+            # Skip products that don't match the brand filter (if provided)
+            if brand and product.get("brand") != brand:
+                continue
+                
+            score = 0
+            product_dict = product.to_dict()
+            
+            # Check product name (highest weight)
+            if "name" in product_dict:
+                name = product_dict["name"].lower()
+                for term in query_terms:
+                    if term in name:
+                        score += 10  # Higher weight for name matches
+            
+            # Check product description
+            if "description" in product_dict:
+                description = product_dict["description"].lower()
+                for term in query_terms:
+                    if term in description:
+                        score += 5  # Medium weight for description matches
+            
+            # Check product categories
+            if "categories" in product_dict and isinstance(product_dict["categories"], list):
+                categories = [cat.lower() for cat in product_dict["categories"]]
+                for term in query_terms:
+                    if any(term in category for category in categories):
+                        score += 8  # High weight for category matches
+            # Fallback for old schema with single category
+            elif "category" in product_dict:
+                category = product_dict["category"].lower()
+                for term in query_terms:
+                    if term in category:
+                        score += 8
+            
+            # Check product brand
+            if "brand" in product_dict:
+                prod_brand = product_dict["brand"].lower()
+                for term in query_terms:
+                    if term in prod_brand:
+                        score += 7  # Medium-high weight for brand matches
+            
+            # Check product attributes
+            if "attributes" in product_dict and isinstance(product_dict["attributes"], dict):
+                for attr_key, attr_value in product_dict["attributes"].items():
+                    attr_str = f"{attr_key} {attr_value}".lower()
+                    for term in query_terms:
+                        if term in attr_str:
+                            score += 3  # Lower weight for attribute matches
+            
+            # Only include products with a positive score
+            if score > 0:
+                # Add the score to the product dictionary
+                product_dict["search_score"] = score
+                scored_products.append(product_dict)
+        
+        # First sort by search relevance score (descending)
+        scored_products.sort(key=lambda x: x.get("search_score", 0), reverse=True)
+        
+        # Then, if products have the same search score, sort by the specified sort field
+        if sort_by and sort_by != "search_score":
+            # Get the top matches by search score
+            top_matches = scored_products[:limit*2]  # Get more than needed for secondary sorting
+            
+            # Group by search score
+            score_groups = {}
+            for product in top_matches:
+                score = product.get("search_score", 0)
+                if score not in score_groups:
+                    score_groups[score] = []
+                score_groups[score].append(product)
+            
+            # Sort each group by the secondary sort criteria
+            for score, products in score_groups.items():
+                # For rating, price, etc., use numeric sorting
+                reverse_sort = sort_by == "rating"  # Higher ratings first
+                products.sort(key=lambda x: x.get(sort_by, 0), reverse=reverse_sort)
+            
+            # Rebuild the sorted list
+            sorted_products = []
+            for score in sorted(score_groups.keys(), reverse=True):
+                sorted_products.extend(score_groups[score])
+            
+            scored_products = sorted_products
+        
+        # Return the top results up to the limit
+        return scored_products[:limit]
+
+    def get_available_brands(self):
+        """Get a list of all unique brands in the products database"""
+        if self.products_df is None or self.products_df.empty:
+            return []
+            
+        if "brand" not in self.products_df.columns:
+            return []
+            
+        # Extract unique brands and sort alphabetically
+        brands = sorted(self.products_df["brand"].unique().tolist())
+        return brands
+        
+    def get_available_categories(self):
+        """Get a list of all unique categories in the products database"""
+        if self.products_df is None or self.products_df.empty:
+            return []
+            
+        # Handle both new schema (categories array) and old schema (category field)
+        categories = set()
+        
+        if "categories" in self.products_df.columns:
+            # Extract all categories from the categories arrays
+            for cats in self.products_df["categories"].dropna():
+                if isinstance(cats, list):
+                    categories.update(cats)
+        
+        if "category" in self.products_df.columns:
+            # Add categories from the old schema
+            categories.update(self.products_df["category"].dropna().unique())
+            
+        # Sort alphabetically
+        return sorted(list(categories))
 
 
 # Instantiate the recommendation engine
 recommendation_engine = RecommendationEngine()
 
 
-def get_recommendations(user_id: str, n_recommendations: int = 5):
-    """Get recommendations for a user"""
+def get_recommendations(user_id: str, n_recommendations: int = 5, brand: str = None):
+    """Get recommendations for a user with optional brand filtering"""
     print(f"Generating recommendations for user: {user_id}")
 
     try:
         # Get recommendations using the engine
         recommendations = recommendation_engine.get_recommended_products(
-            user_id, n_recommendations
+            user_id, n_recommendations, brand_filter=brand
         )
 
         if not recommendations:
@@ -231,8 +409,12 @@ def get_recommendations(user_id: str, n_recommendations: int = 5):
                 f"No recommendations found for user {user_id}. Returning popular items."
             )
             # Return popular items or other fallback recommendations
+            query = {"rating": {"$exists": True}}
+            if brand:
+                query["brand"] = brand
+                
             popular_products = list(
-                db.products.find().sort("rating", -1).limit(n_recommendations)
+                db.products.find(query).sort("rating", -1).limit(n_recommendations)
             )
             return parse_json(popular_products)
 
@@ -245,8 +427,12 @@ def get_recommendations(user_id: str, n_recommendations: int = 5):
         print(f"Error generating recommendations for user {user_id}: {e}")
         # Fallback: return popular items
         try:
+            query = {"rating": {"$exists": True}}
+            if brand:
+                query["brand"] = brand
+                
             popular_products = list(
-                db.products.find().sort("rating", -1).limit(n_recommendations)
+                db.products.find(query).sort("rating", -1).limit(n_recommendations)
             )
             return parse_json(popular_products)
         except Exception as db_e:
@@ -254,10 +440,70 @@ def get_recommendations(user_id: str, n_recommendations: int = 5):
             return []  # Return empty list if DB fails
 
 
+def search_products(query: str, brand: str = None, sort_by: str = "rating", limit: int = 20):
+    """Search for products matching the query terms"""
+    print(f"Searching products with query: {query}")
+    
+    try:
+        # Split the query into terms
+        query_terms = query.split()
+        
+        # Use the search function from the recommendation engine
+        search_results = recommendation_engine.search_products(
+            query_terms, brand=brand, sort_by=sort_by, limit=limit
+        )
+        
+        if not search_results:
+            print(f"No products found matching query: {query}")
+            return []
+            
+        print(f"Found {len(search_results)} products matching query: {query}")
+        
+        # Convert to JSON-serializable format
+        return parse_json(search_results)
+        
+    except Exception as e:
+        print(f"Error searching products with query {query}: {e}")
+        return []
+
+
+def get_available_brands():
+    """Get a list of all unique brands in the products database"""
+    try:
+        return recommendation_engine.get_available_brands()
+    except Exception as e:
+        print(f"Error getting available brands: {e}")
+        return []
+        
+        
+def get_available_categories():
+    """Get a list of all unique categories in the products database"""
+    try:
+        return recommendation_engine.get_available_categories()
+    except Exception as e:
+        print(f"Error getting available categories: {e}")
+        return []
+
+
 # Example usage (optional, for testing)
 if __name__ == "__main__":
-    for user_id in ["user1", "user2", "user3", "user4", "user5"]:
+    for user_id in ["user1", "user2", "user3"]:
         recs = get_recommendations(user_id)
         print(f"\nRecommendations for {user_id}:")
-        for rec in recs:
-            print(f"- {rec['name']} ({rec['category']}) - ${rec['price']}")
+        for i, rec in enumerate(recs[:3], 1):  # Show only top 3 for brevity
+            print(f"{i}. {rec['name']} ({'/'.join(rec['categories'])}) - ${rec['price']}")
+    
+    # Test search functionality
+    print("\nSearch results for 'desk':")
+    results = search_products("desk")
+    for i, result in enumerate(results[:3], 1):  # Show only top 3 for brevity
+        print(f"{i}. {result['name']} ({result['brand']}) - Score: {result.get('search_score', 0)}")
+    
+    # Test brand and category listing
+    print("\nAvailable brands:")
+    brands = get_available_brands()
+    print(", ".join(brands[:10]))  # Show first 10 brands
+    
+    print("\nAvailable categories:")
+    categories = get_available_categories()
+    print(", ".join(categories[:10]))  # Show first 10 categories

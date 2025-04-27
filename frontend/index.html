@@ -181,6 +181,9 @@
             overflow: hidden;
             border: 1px solid var(--grey);
             transition: all 0.3s;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
         }
         
         .product-card:hover {
@@ -191,17 +194,33 @@
         
         .product-img {
             width: 100%;
-            height: 180px;
+            height: 200px;
             background-color: var(--primary-light);
             display: flex;
             align-items: center;
             justify-content: center;
             color: var(--primary);
             font-size: 2rem;
+            overflow: hidden;
+            position: relative;
+        }
+        
+        .product-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        
+        .product-card:hover .product-img img {
+            transform: scale(1.05);
         }
         
         .product-details {
             padding: 16px;
+            display: flex;
+            flex-direction: column;
+            flex-grow: 1;
         }
         
         .product-name {
@@ -214,12 +233,40 @@
             font-weight: 700;
             font-size: 1.2rem;
             color: var(--secondary);
-            margin-top: 8px;
+            margin-top: auto;
+            padding-top: 8px;
         }
         
-        .product-category {
+        .product-brand {
+            font-weight: 500;
+            color: var(--primary);
+            font-size: 0.9rem;
+            margin-bottom: 4px;
+        }
+        
+        .product-categories {
             color: var(--grey-dark);
             font-size: 0.9rem;
+            margin-bottom: 6px;
+        }
+        
+        .product-rating {
+            display: flex;
+            align-items: center;
+            margin-top: 8px;
+            margin-bottom: 12px;
+        }
+        
+        .stars {
+            color: #FFD700;
+            font-size: 0.9rem;
+            letter-spacing: 2px;
+        }
+        
+        .rating-value {
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-left: 4px;
         }
         
         .status-message {
@@ -314,7 +361,7 @@
         }
         
         .product-detail-img {
-            height: 200px;
+            height: 250px;
             background-color: var(--primary-light);
             display: flex;
             align-items: center;
@@ -323,6 +370,13 @@
             font-size: 4rem;
             border-radius: var(--radius);
             margin-bottom: 24px;
+            overflow: hidden;
+        }
+        
+        .product-detail-img img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
         
         .product-detail-info {
@@ -335,10 +389,18 @@
             margin-bottom: 8px;
         }
         
+        .product-detail-brand {
+            font-weight: 500;
+            color: var(--primary);
+            font-size: 1rem;
+            margin-bottom: 16px;
+        }
+        
         .product-detail-meta {
             display: flex;
             gap: 16px;
             margin-bottom: 16px;
+            flex-wrap: wrap;
         }
         
         .product-detail-price {
@@ -347,47 +409,160 @@
             color: var(--secondary);
         }
         
-        .product-detail-category {
+        .product-detail-rating {
+            display: flex;
+            align-items: center;
+        }
+        
+        .product-detail-stock {
+            font-weight: 500;
+            color: #4CAF50;
+        }
+        
+        .product-detail-stock.low {
+            color: #FFC107;
+        }
+        
+        .product-detail-stock.out {
+            color: var(--secondary);
+        }
+        
+        .product-detail-categories {
+            margin-bottom: 16px;
+        }
+        
+        .category-tag {
             display: inline-block;
             background-color: var(--primary-light);
             color: var(--primary);
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 0.9rem;
+            margin-right: 8px;
+            margin-bottom: 8px;
         }
         
         .product-description {
             line-height: 1.8;
             color: #555;
+            margin-bottom: 24px;
         }
         
-        .product-features {
+        .product-attributes {
             margin-top: 24px;
+            background-color: var(--light);
+            padding: 16px;
+            border-radius: var(--radius);
         }
         
-        .feature-list {
-            list-style: none;
-            margin-top: 12px;
+        .attributes-title {
+            font-weight: 600;
+            margin-bottom: 12px;
+            font-size: 1.1rem;
         }
         
-        .feature-item {
-            position: relative;
-            padding-left: 28px;
-            margin-bottom: 8px;
+        .attribute-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 12px;
         }
         
-        .feature-item:before {
-            content: "✓";
-            position: absolute;
-            left: 0;
-            color: var(--primary);
-            font-weight: bold;
+        .attribute-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .attribute-name {
+            font-size: 0.9rem;
+            color: var(--grey-dark);
+        }
+        
+        .attribute-value {
+            font-weight: 500;
         }
         
         .modal-actions {
             margin-top: 24px;
             display: flex;
             gap: 12px;
+        }
+        
+        /* Filter Panel Styles */
+        .filter-panel {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 20px;
+            margin-bottom: 16px;
+        }
+        
+        .filter-group {
+            flex: 1 1 200px;
+        }
+        
+        .filter-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 1px solid var(--grey);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            background-color: white;
+        }
+        
+        .search-form {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        
+        .search-input {
+            flex-grow: 1;
+            padding: 12px 16px;
+            border: 2px solid var(--grey);
+            border-radius: 8px;
+            font-size: 1rem;
+        }
+        
+        .search-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-light);
+        }
+        
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 32px;
+            gap: 8px;
+        }
+        
+        .page-btn {
+            background-color: white;
+            border: 1px solid var(--grey);
+            color: var(--dark);
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .page-btn:hover:not(.active) {
+            background-color: var(--grey);
+        }
+        
+        .page-btn.active {
+            background-color: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+        
+        .page-btn.disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
         }
     </style>
 </head>
@@ -399,14 +574,70 @@
                 <span>Smart Shop</span>
             </a>
             <div>
-                <p>E-commerce Recommendation Engine</p>
+                <p>Product Recommendation Engine</p>
             </div>
         </div>
     </header>
 
     <div class="container">
         <section class="card">
-            <h2 class="section-title">Find Your Personalized Recommendations</h2>
+            <h2 class="section-title">Find Your Perfect Products</h2>
+            
+            <form id="searchForm" class="search-form">
+                <input type="text" id="searchInput" class="search-input" placeholder="Search for products (e.g., 'laptop', 'office furniture', 'gaming')">
+                <button type="submit" class="btn">Search</button>
+            </form>
+            
+            <div id="filterPanel" class="filter-panel">
+                <div class="filter-group">
+                    <label for="brandFilter" class="form-label">Brand</label>
+                    <select id="brandFilter" class="filter-select">
+                        <option value="">All Brands</option>
+                        <!-- Brand options will be populated dynamically -->
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="categoryFilter" class="form-label">Category</label>
+                    <select id="categoryFilter" class="filter-select">
+                        <option value="">All Categories</option>
+                        <!-- Category options will be populated dynamically -->
+                    </select>
+                </div>
+                
+                <div class="filter-group">
+                    <label for="sortBy" class="form-label">Sort By</label>
+                    <select id="sortBy" class="filter-select">
+                        <option value="rating">Highest Rating</option>
+                        <option value="price">Price: Low to High</option>
+                        <option value="-price">Price: High to Low</option>
+                        <option value="name">Name: A-Z</option>
+                    </select>
+                </div>
+            </div>
+            
+            <div id="loadingProducts" class="status-message hidden">
+                <div class="loading-spinner"></div> Loading products...
+            </div>
+            
+            <div id="productError" class="status-message error hidden"></div>
+            
+            <div id="productsContainer">
+                <div id="searchResults" class="hidden">
+                    <h3 class="section-title">Search Results: <span id="searchQueryDisplay"></span></h3>
+                    <div id="searchResultsList" class="products-list"></div>
+                </div>
+                
+                <div id="productsList" class="products-list"></div>
+                
+                <div id="pagination" class="pagination hidden">
+                    <!-- Pagination buttons will be added dynamically -->
+                </div>
+            </div>
+        </section>
+        
+        <section class="card">
+            <h2 class="section-title">Personalized Recommendations</h2>
             <div class="search-box">
                 <div class="form-group">
                     <label for="userId" class="form-label">User ID</label>
@@ -424,21 +655,6 @@
             <div id="recommendationsContainer" class="hidden">
                 <h3 class="section-title" style="margin-top: 24px;">Recommendations for <span id="displayUserId">user1</span></h3>
                 <div id="recommendationsList" class="recommendations-list"></div>
-            </div>
-        </section>
-        
-        <section class="card">
-            <h2 class="section-title">Browse Our Catalog</h2>
-            <button id="loadProductsBtn" class="btn btn-secondary">Load All Products</button>
-            
-            <div id="loadingProducts" class="status-message hidden">
-                <div class="loading-spinner"></div> Loading products...
-            </div>
-            
-            <div id="productError" class="status-message error hidden"></div>
-            
-            <div id="productsContainer" class="hidden">
-                <div id="productsList" class="products-list"></div>
             </div>
         </section>
     </div>
@@ -464,20 +680,57 @@
         const userIdInput = document.getElementById('userId');
         const displayUserId = document.getElementById('displayUserId');
         const recommendationBtn = document.getElementById('recommendationBtn');
-        const loadProductsBtn = document.getElementById('loadProductsBtn');
         const recommendationsList = document.getElementById('recommendationsList');
-        const productsList = document.getElementById('productsList');
         const recommendationsContainer = document.getElementById('recommendationsContainer');
-        const productsContainer = document.getElementById('productsContainer');
         const loadingRecommendations = document.getElementById('loadingRecommendations');
-        const loadingProducts = document.getElementById('loadingProducts');
         const recommendationError = document.getElementById('recommendationError');
+        
+        const searchForm = document.getElementById('searchForm');
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('searchResults');
+        const searchResultsList = document.getElementById('searchResultsList');
+        const searchQueryDisplay = document.getElementById('searchQueryDisplay');
+        
+        const brandFilter = document.getElementById('brandFilter');
+        const categoryFilter = document.getElementById('categoryFilter');
+        const sortBy = document.getElementById('sortBy');
+        
+        const productsList = document.getElementById('productsList');
+        const productsContainer = document.getElementById('productsContainer');
+        const loadingProducts = document.getElementById('loadingProducts');
         const productError = document.getElementById('productError');
+        const pagination = document.getElementById('pagination');
         
         // DOM elements for modal
         const productModal = document.getElementById('productModal');
         const closeModal = document.getElementById('closeModal');
         const productDetailContent = document.getElementById('productDetailContent');
+        
+        // Global state
+        let currentPage = 1;
+        const productsPerPage = 12;
+        let totalProducts = 0;
+        let currentSearchQuery = '';
+        
+        // Function to create star rating display
+        function createStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const halfStar = rating % 1 >= 0.5;
+            const emptyStars = 5 - fullStars - (halfStar ? 1 : 0);
+            
+            let stars = '';
+            for (let i = 0; i < fullStars; i++) {
+                stars += '★';
+            }
+            if (halfStar) {
+                stars += '½';
+            }
+            for (let i = 0; i < emptyStars; i++) {
+                stars += '☆';
+            }
+            
+            return `<div class="stars">${stars}</div><div class="rating-value">${rating.toFixed(1)}</div>`;
+        }
         
         // Function to create a product card
         function createProductCard(product) {
@@ -485,19 +738,36 @@
             card.className = 'product-card';
             card.dataset.productId = product._id;
             
-            // Generate product icon based on category
-            let productIcon = '📦';
-            if (product.category === 'Electronics') productIcon = '🔌';
-            else if (product.category === 'Home Goods') productIcon = '🏠';
-            else if (product.category === 'Clothing') productIcon = '👕';
-            else if (product.category === 'Books') productIcon = '📚';
+            let imageContent;
+            if (product.imageUrl) {
+                imageContent = `<img src="${product.imageUrl}" alt="${product.name}" loading="lazy">`;
+            } else {
+                // Generate product icon based on first category or fallback
+                let productIcon = '📦';
+                const category = product.categories?.[0] || product.category || '';
+                
+                if (category.includes('Electronics')) productIcon = '🔌';
+                else if (category.includes('Computers')) productIcon = '💻';
+                else if (category.includes('Home')) productIcon = '🏠';
+                else if (category.includes('Furniture')) productIcon = '🪑';
+                else if (category.includes('Audio')) productIcon = '🎧';
+                
+                imageContent = productIcon;
+            }
+            
+            // Get first 2 categories for display
+            const categories = product.categories 
+                ? product.categories.slice(0, 2).join(', ') 
+                : (product.category || 'Uncategorized');
             
             card.innerHTML = `
-                <div class="product-img">${productIcon}</div>
+                <div class="product-img">${imageContent}</div>
                 <div class="product-details">
+                    ${product.brand ? `<div class="product-brand">${product.brand}</div>` : ''}
                     <div class="product-name">${product.name}</div>
-                    <div class="product-category">${product.category}</div>
-                    <div class="product-price">$${product.price}</div>
+                    <div class="product-categories">${categories}</div>
+                    <div class="product-rating">${createStarRating(product.rating)}</div>
+                    <div class="product-price">$${product.price.toFixed(2)}</div>
                 </div>
             `;
             
@@ -509,191 +779,410 @@
         
         // Function to show product details in modal
         function showProductDetails(product) {
-            // Generate product icon based on category
-            let productIcon = '📦';
-            if (product.category === 'Electronics') productIcon = '🔌';
-            else if (product.category === 'Home Goods') productIcon = '🏠';
-            else if (product.category === 'Clothing') productIcon = '👕';
-            else if (product.category === 'Books') productIcon = '📚';
-            
-            // Generate random description and features if not available
-            const description = product.description || 
-                `This premium ${product.category.toLowerCase()} item offers excellent quality and value. Perfect for everyday use.`;
-            
-            // Create features based on category
-            let features = [];
-            if (product.category === 'Electronics') {
-                features = ['High performance', 'Energy efficient', 'Durable build quality'];
-            } else if (product.category === 'Home Goods') {
-                features = ['Premium materials', 'Modern design', 'Easy to clean'];
-            } else if (product.category === 'Clothing') {
-                features = ['Comfortable fit', 'Machine washable', 'High-quality fabric'];
-            } else if (product.category === 'Books') {
-                features = ['Engaging content', 'Well-reviewed', 'Perfect gift'];
+            // Prepare the image content
+            let imageContent;
+            if (product.imageUrl) {
+                imageContent = `<img src="${product.imageUrl}" alt="${product.name}">`;
             } else {
-                features = ['High quality', 'Great value', 'Customer favorite'];
+                // Generate product icon based on first category or fallback
+                let productIcon = '📦';
+                const category = product.categories?.[0] || product.category || '';
+                
+                if (category.includes('Electronics')) productIcon = '🔌';
+                else if (category.includes('Computers')) productIcon = '💻';
+                else if (category.includes('Home')) productIcon = '🏠';
+                else if (category.includes('Furniture')) productIcon = '🪑';
+                else if (category.includes('Audio')) productIcon = '🎧';
+                
+                imageContent = productIcon;
             }
             
-            // Create feature list HTML
-            const featureListHTML = features.map(feature => 
-                `<li class="feature-item">${feature}</li>`
-            ).join('');
+            // Prepare stock status
+            let stockClass = product.stock > 10 ? '' : (product.stock > 0 ? 'low' : 'out');
+            let stockText = product.stock > 10 
+                ? `In Stock (${product.stock} available)` 
+                : (product.stock > 0 ? `Low Stock (${product.stock} left)` : 'Out of Stock');
             
-            // Set modal content
-            productDetailContent.innerHTML = `
-                <div class="product-detail-img">${productIcon}</div>
+            // Prepare categories tags
+            let categoriesHtml = '';
+            if (product.categories && Array.isArray(product.categories)) {
+                categoriesHtml = product.categories.map(cat => 
+                    `<span class="category-tag">${cat}</span>`
+                ).join('');
+            } else if (product.category) {
+                categoriesHtml = `<span class="category-tag">${product.category}</span>`;
+            }
+            
+            // Prepare attributes
+            let attributesHtml = '';
+            if (product.attributes && Object.keys(product.attributes).length > 0) {
+                attributesHtml = `
+                    <div class="product-attributes">
+                        <div class="attributes-title">Specifications</div>
+                        <div class="attribute-list">
+                            ${Object.entries(product.attributes).map(([key, value]) => `
+                                <div class="attribute-item">
+                                    <div class="attribute-name">${key.replace('_', ' ')}</div>
+                                    <div class="attribute-value">${value}</div>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                `;
+            }
+            
+            // Build the full HTML content
+            const content = `
+                <div class="product-detail-img">${imageContent}</div>
                 <div class="product-detail-info">
-                    <h2 class="product-detail-title">${product.name}</h2>
+                    <div class="product-detail-title">${product.name}</div>
+                    ${product.brand ? `<div class="product-detail-brand">${product.brand}</div>` : ''}
+                    
                     <div class="product-detail-meta">
-                        <div class="product-detail-price">$${product.price}</div>
-                        <div class="product-detail-category">${product.category}</div>
+                        <div class="product-detail-price">$${product.price.toFixed(2)}</div>
+                        <div class="product-detail-rating">${createStarRating(product.rating)}</div>
+                        <div class="product-detail-stock ${stockClass}">${stockText}</div>
                     </div>
-                    <p class="product-description">${description}</p>
-                    <div class="product-features">
-                        <h4>Features</h4>
-                        <ul class="feature-list">
-                            ${featureListHTML}
-                        </ul>
+                    
+                    <div class="product-detail-categories">
+                        ${categoriesHtml}
                     </div>
+                    
+                    ${product.description ? `<div class="product-description">${product.description}</div>` : ''}
                 </div>
+                
+                ${attributesHtml}
+                
                 <div class="modal-actions">
                     <button class="btn">Add to Cart</button>
                     <button class="btn btn-secondary" id="closeModalBtn">Close</button>
                 </div>
             `;
             
-            // Add event listener to the Close button
-            document.getElementById('closeModalBtn').addEventListener('click', closeProductModal);
-            
-            // Show modal
+            // Set content and show modal
+            productDetailContent.innerHTML = content;
             productModal.classList.add('active');
             
-            // Prevent body scrolling when modal is open
-            document.body.style.overflow = 'hidden';
+            // Add event listener to the close button inside the modal
+            document.getElementById('closeModalBtn').addEventListener('click', () => {
+                productModal.classList.remove('active');
+            });
         }
         
-        // Function to close product modal
-        function closeProductModal() {
-            productModal.classList.remove('active');
-            // Re-enable body scrolling
-            document.body.style.overflow = '';
-        }
-
-        // Fetch recommendations
-        async function fetchRecommendations() {
-            const userId = userIdInput.value.trim();
-            if (!userId) {
-                recommendationError.textContent = 'Please enter a user ID';
-                recommendationError.classList.remove('hidden');
-                return;
+        // Function to create pagination
+        function createPagination(totalItems, itemsPerPage, currentPage) {
+            const totalPages = Math.ceil(totalItems / itemsPerPage);
+            pagination.innerHTML = '';
+            
+            // Always show first page
+            addPageButton(1);
+            
+            // Add ellipsis if needed
+            if (currentPage > 3) {
+                addEllipsis();
             }
             
-            // Update display and show loading state
-            displayUserId.textContent = userId;
-            recommendationsContainer.classList.add('hidden');
-            recommendationError.classList.add('hidden');
-            loadingRecommendations.classList.remove('hidden');
-
-            try {
-                const response = await fetch(`${API_BASE_URL}/recommendations/${userId}`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+            // Add pages around current page
+            for (let i = Math.max(2, currentPage - 1); i <= Math.min(totalPages - 1, currentPage + 1); i++) {
+                if (i > 1 && i < totalPages) {
+                    addPageButton(i);
                 }
-                
-                const data = await response.json();
-                
-                // Hide loading state
-                loadingRecommendations.classList.add('hidden');
-                
-                // Clear previous recommendations
-                recommendationsList.innerHTML = '';
-                
-                if (data.recommendations && data.recommendations.length > 0) {
-                    data.recommendations.forEach(product => {
-                        const card = createProductCard(product);
-                        recommendationsList.appendChild(card);
-                    });
-                    recommendationsContainer.classList.remove('hidden');
-                } else {
-                    recommendationError.textContent = 'No recommendations found for this user.';
-                    recommendationError.classList.remove('hidden');
-                }
-            } catch (error) {
-                console.error('Error fetching recommendations:', error);
-                loadingRecommendations.classList.add('hidden');
-                recommendationError.textContent = 'Failed to load recommendations. Please try again.';
-                recommendationError.classList.remove('hidden');
+            }
+            
+            // Add ellipsis if needed
+            if (currentPage < totalPages - 2) {
+                addEllipsis();
+            }
+            
+            // Always show last page if more than 1 page
+            if (totalPages > 1) {
+                addPageButton(totalPages);
+            }
+            
+            // Add previous/next buttons
+            const prevButton = document.createElement('button');
+            prevButton.className = `page-btn ${currentPage === 1 ? 'disabled' : ''}`;
+            prevButton.textContent = '←';
+            prevButton.disabled = currentPage === 1;
+            if (currentPage > 1) {
+                prevButton.addEventListener('click', () => loadProducts(currentPage - 1));
+            }
+            pagination.prepend(prevButton);
+            
+            const nextButton = document.createElement('button');
+            nextButton.className = `page-btn ${currentPage === totalPages ? 'disabled' : ''}`;
+            nextButton.textContent = '→';
+            nextButton.disabled = currentPage === totalPages;
+            if (currentPage < totalPages) {
+                nextButton.addEventListener('click', () => loadProducts(currentPage + 1));
+            }
+            pagination.appendChild(nextButton);
+            
+            // Only show pagination if there's more than 1 page
+            pagination.classList.toggle('hidden', totalPages <= 1);
+            
+            function addPageButton(pageNum) {
+                const button = document.createElement('button');
+                button.className = `page-btn ${pageNum === currentPage ? 'active' : ''}`;
+                button.textContent = pageNum;
+                button.addEventListener('click', () => {
+                    if (pageNum !== currentPage) {
+                        loadProducts(pageNum);
+                    }
+                });
+                pagination.appendChild(button);
+            }
+            
+            function addEllipsis() {
+                const ellipsis = document.createElement('span');
+                ellipsis.className = 'page-btn';
+                ellipsis.textContent = '...';
+                ellipsis.style.cursor = 'default';
+                pagination.appendChild(ellipsis);
             }
         }
-
-        // Fetch all products
-        async function fetchAllProducts() {
-            // Show loading state
-            productsContainer.classList.add('hidden');
-            productError.classList.add('hidden');
-            loadingProducts.classList.remove('hidden');
-
+        
+        // Function to load available brands and categories for filters
+        async function loadFilters() {
             try {
-                const response = await fetch(`${API_BASE_URL}/products`);
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
-                }
+                // Fetch brands
+                const brandsResponse = await fetch(`${API_BASE_URL}/brands`);
+                if (!brandsResponse.ok) throw new Error('Failed to load brands');
+                const brandsData = await brandsResponse.json();
                 
-                const products = await response.json();
+                // Populate brand filter
+                brandFilter.innerHTML = '<option value="">All Brands</option>';
+                brandsData.brands.forEach(brand => {
+                    const option = document.createElement('option');
+                    option.value = brand;
+                    option.textContent = brand;
+                    brandFilter.appendChild(option);
+                });
                 
-                // Hide loading state
-                loadingProducts.classList.add('hidden');
+                // Fetch categories
+                const categoriesResponse = await fetch(`${API_BASE_URL}/categories`);
+                if (!categoriesResponse.ok) throw new Error('Failed to load categories');
+                const categoriesData = await categoriesResponse.json();
                 
-                // Clear previous products
-                productsList.innerHTML = '';
-                
-                if (products && products.length > 0) {
-                    products.forEach(product => {
-                        const card = createProductCard(product);
-                        productsList.appendChild(card);
-                    });
-                    productsContainer.classList.remove('hidden');
-                } else {
-                    productError.textContent = 'No products found in the catalog.';
-                    productError.classList.remove('hidden');
-                }
+                // Populate category filter
+                categoryFilter.innerHTML = '<option value="">All Categories</option>';
+                categoriesData.categories.forEach(category => {
+                    const option = document.createElement('option');
+                    option.value = category;
+                    option.textContent = category;
+                    categoryFilter.appendChild(option);
+                });
             } catch (error) {
-                console.error('Error fetching products:', error);
-                loadingProducts.classList.add('hidden');
-                productError.textContent = 'Failed to load products. Please try again.';
+                console.error('Error loading filters:', error);
+                productError.textContent = `Error loading filters: ${error.message}`;
                 productError.classList.remove('hidden');
             }
         }
-
-        // Event listeners
-        recommendationBtn.addEventListener('click', fetchRecommendations);
-        loadProductsBtn.addEventListener('click', fetchAllProducts);
-        closeModal.addEventListener('click', closeProductModal);
         
-        // Close modal when clicking outside
-        productModal.addEventListener('click', function(e) {
+        // Function to load products with filtering and pagination
+        async function loadProducts(page = 1, isSearch = false) {
+            try {
+                productError.classList.add('hidden');
+                loadingProducts.classList.remove('hidden');
+                searchResults.classList.add('hidden');
+                
+                // Set current page
+                currentPage = page;
+                
+                let url;
+                let productsData;
+                
+                const brand = brandFilter.value;
+                const category = categoryFilter.value;
+                const sortValue = sortBy.value;
+                
+                // Determine sort field and order
+                let sortField = 'rating';
+                let sortOrder = 'desc';
+                
+                if (sortValue === 'price') {
+                    sortField = 'price';
+                    sortOrder = 'asc';
+                } else if (sortValue === '-price') {
+                    sortField = 'price';
+                    sortOrder = 'desc';
+                } else if (sortValue === 'name') {
+                    sortField = 'name';
+                    sortOrder = 'asc';
+                }
+                
+                if (isSearch && currentSearchQuery) {
+                    // Build search URL with filters
+                    url = `${API_BASE_URL}/search?q=${encodeURIComponent(currentSearchQuery)}`;
+                    if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+                    url += `&sort_by=${sortField}&limit=${productsPerPage}`;
+                    
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('Failed to search products');
+                    
+                    const searchData = await response.json();
+                    productsData = {
+                        products: searchData.results,
+                        total: searchData.count,
+                        limit: productsPerPage,
+                        offset: 0
+                    };
+                    
+                    // Update search results display
+                    searchQueryDisplay.textContent = currentSearchQuery;
+                    searchResults.classList.remove('hidden');
+                    searchResultsList.innerHTML = '';
+                    
+                    // Display search results
+                    if (searchData.results.length === 0) {
+                        searchResultsList.innerHTML = '<p>No products found matching your search criteria.</p>';
+                    } else {
+                        searchData.results.forEach(product => {
+                            searchResultsList.appendChild(createProductCard(product));
+                        });
+                    }
+                    
+                    // Hide regular product list when showing search results
+                    productsList.innerHTML = '';
+                    pagination.classList.add('hidden');
+                    loadingProducts.classList.add('hidden');
+                    return;
+                } else {
+                    // Regular product listing with pagination and filters
+                    const offset = (page - 1) * productsPerPage;
+                    
+                    url = `${API_BASE_URL}/products?limit=${productsPerPage}&offset=${offset}`;
+                    url += `&sort_by=${sortField}&sort_order=${sortOrder}`;
+                    if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+                    if (category) url += `&category=${encodeURIComponent(category)}`;
+                    
+                    const response = await fetch(url);
+                    if (!response.ok) throw new Error('Failed to load products');
+                    
+                    productsData = await response.json();
+                }
+                
+                // Hide search results when showing regular listings
+                searchResults.classList.add('hidden');
+                
+                // Update product list
+                productsList.innerHTML = '';
+                
+                if (productsData.products.length === 0) {
+                    productsList.innerHTML = '<p>No products found matching your criteria.</p>';
+                } else {
+                    productsData.products.forEach(product => {
+                        productsList.appendChild(createProductCard(product));
+                    });
+                }
+                
+                // Update pagination
+                totalProducts = productsData.total;
+                createPagination(totalProducts, productsPerPage, currentPage);
+                
+            } catch (error) {
+                console.error('Error loading products:', error);
+                productError.textContent = `Error loading products: ${error.message}`;
+                productError.classList.remove('hidden');
+            } finally {
+                loadingProducts.classList.add('hidden');
+            }
+        }
+        
+        // Function to load recommendations
+        async function loadRecommendations(userId) {
+            try {
+                recommendationError.classList.add('hidden');
+                loadingRecommendations.classList.remove('hidden');
+                recommendationsContainer.classList.add('hidden');
+                
+                // Get brand filter for recommendations
+                const brand = brandFilter.value;
+                
+                // Call recommendations API with optional brand filter
+                let url = `${API_BASE_URL}/recommendations/${userId}?limit=4`;
+                if (brand) url += `&brand=${encodeURIComponent(brand)}`;
+                
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to load recommendations');
+                }
+                
+                const data = await response.json();
+                displayUserId.textContent = userId;
+                
+                // Display recommendations
+                recommendationsList.innerHTML = '';
+                
+                if (data.recommendations.length === 0) {
+                    recommendationsList.innerHTML = '<p>No recommendations found for this user.</p>';
+                } else {
+                    data.recommendations.forEach(product => {
+                        recommendationsList.appendChild(createProductCard(product));
+                    });
+                }
+                
+                recommendationsContainer.classList.remove('hidden');
+                
+            } catch (error) {
+                console.error('Error loading recommendations:', error);
+                recommendationError.textContent = `Error: ${error.message}`;
+                recommendationError.classList.remove('hidden');
+            } finally {
+                loadingRecommendations.classList.add('hidden');
+            }
+        }
+        
+        // Event Listeners
+        
+        // Load recommendations when button is clicked
+        recommendationBtn.addEventListener('click', () => {
+            const userId = userIdInput.value.trim();
+            if (userId) {
+                loadRecommendations(userId);
+            } else {
+                recommendationError.textContent = 'Please enter a user ID';
+                recommendationError.classList.remove('hidden');
+            }
+        });
+        
+        // Handle search form submission
+        searchForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const query = searchInput.value.trim();
+            if (query) {
+                currentSearchQuery = query;
+                loadProducts(1, true);
+            }
+        });
+        
+        // Handle filter changes
+        brandFilter.addEventListener('change', () => loadProducts(1, !!currentSearchQuery));
+        categoryFilter.addEventListener('change', () => loadProducts(1, !!currentSearchQuery));
+        sortBy.addEventListener('change', () => loadProducts(currentPage, !!currentSearchQuery));
+        
+        // Close modal when clicking the X button or outside the modal content
+        closeModal.addEventListener('click', () => {
+            productModal.classList.remove('active');
+        });
+        
+        productModal.addEventListener('click', (e) => {
             if (e.target === productModal) {
-                closeProductModal();
+                productModal.classList.remove('active');
             }
         });
         
-        // Close modal with ESC key
-        document.addEventListener('keydown', function(e) {
-            if (e.key === 'Escape' && productModal.classList.contains('active')) {
-                closeProductModal();
-            }
-        });
-        
-        // Allow Enter key to trigger recommendation search
-        userIdInput.addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                fetchRecommendations();
-            }
-        });
-        
-        // Fetch recommendations for default user on page load
+        // Initialization
         document.addEventListener('DOMContentLoaded', () => {
-            setTimeout(fetchRecommendations, 500); // Small delay for better UX
+            // Load filters (brands and categories)
+            loadFilters();
+            
+            // Load initial products
+            loadProducts();
+            
+            // Load initial recommendations for default user
+            loadRecommendations(userIdInput.value.trim());
         });
     </script>
 </body>
