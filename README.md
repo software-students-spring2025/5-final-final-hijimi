@@ -4,6 +4,7 @@
 
 *   [Xingjian Zhang](https://github.com/ScottZXJ123)
 *   [Hao Yang](https://github.com/Hao-Yang-Hao)
+*   [Shenrui Xue](https://github.com/ShenruiXue666)
 ## Subsystems
 [![API CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml)
 [![Recommender CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml)
