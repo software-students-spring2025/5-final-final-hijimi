@@ -4,6 +4,7 @@
 
 *   [Xingjian Zhang](https://github.com/ScottZXJ123)
 *   [Hao Yang](https://github.com/Hao-Yang-Hao)
+*   [Shenrui Xue](https://github.com/ShenruiXue666)
 ## Subsystems
 [![API CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/api.yml)
 [![Recommender CI/CD](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-final-hijimi/actions/workflows/recommender.yml)
@@ -49,3 +50,34 @@
 See `.env.example` for required environment variables. Create a `.env` file based on the example and populate it with your configuration and secrets.
 
 *(Ensure this section provides clear instructions as per instructions.md)*
+
+#  How to Run Unit Tests
+
+This project has two main components to test:
+
+- **api/** — FastAPI web service (`app.py`)
+- **recommender/** — Machine learning recommendation engine (`recommender.py`)
+
+Both components have their own tests and requirements.
+
+---
+
+###  Install Dependencies
+
+You need to install dependencies for both components separately.
+
+First, install API dependencies:
+
+```bash
+cd api
+pip install -r requirements.txt
+pytest --cov=api tests/ --cov-report=term-missing
+```
+
+Then, install Recommender dependencies:
+```bash
+cd ../recommender
+pip install -r requirements.txt
+pytest --cov=recommender tests/ --cov-report=term-missing
+```
+
