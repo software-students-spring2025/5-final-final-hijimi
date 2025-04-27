@@ -181,6 +181,23 @@
             box-shadow: 0 0 0 3px var(--primary-light);
         }
         
+        /* User ID Hint */
+        .user-id-hint {
+            margin-top: 8px;
+            color: var(--grey-dark);
+            font-size: 0.85rem;
+        }
+        
+        .user-id-hint span {
+            background-color: var(--primary-light);
+            color: var(--primary-dark);
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin: 0 2px;
+            font-family: monospace;
+            font-weight: 500;
+        }
+        
         /* Button Styles */
         .btn {
             background: linear-gradient(135deg, var(--primary), var(--accent));
@@ -388,7 +405,7 @@
         
         .product-actions {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
             margin-top: 16px;
             padding-top: 16px;
@@ -417,20 +434,6 @@
         
         .btn-outline:hover {
             background-color: var(--primary-light);
-        }
-        
-        .wishlist-btn {
-            background: transparent;
-            border: none;
-            color: var(--grey-dark);
-            font-size: 1.25rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .wishlist-btn:hover {
-            color: var(--secondary);
-            transform: scale(1.2);
         }
         
         /* Status Messages */
@@ -717,58 +720,7 @@
         .modal-actions {
             margin-top: 32px;
             display: flex;
-            gap: 16px;
-            flex-wrap: wrap;
-        }
-        
-        .product-quantity {
-            display: flex;
-            align-items: center;
-            margin-top: 24px;
-            gap: 16px;
-        }
-        
-        .quantity-label {
-            font-weight: 500;
-            color: var(--dark);
-        }
-        
-        .quantity-controls {
-            display: flex;
-            align-items: center;
-            border: 2px solid var(--grey);
-            border-radius: var(--radius);
-            overflow: hidden;
-        }
-        
-        .quantity-btn {
-            background: var(--light-2);
-            border: none;
-            color: var(--dark);
-            width: 36px;
-            height: 36px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-        
-        .quantity-btn:hover {
-            background-color: var(--primary-light);
-            color: var(--primary);
-        }
-        
-        .quantity-input {
-            width: 50px;
-            height: 36px;
-            border: none;
-            text-align: center;
-            font-size: 1rem;
-            font-weight: 500;
-            background-color: white;
-        }
-        
-        .quantity-input:focus {
-            outline: none;
+            justify-content: center;
         }
         
         .product-tabs {
@@ -915,6 +867,9 @@
                 <div class="form-group">
                     <label for="userId" class="form-label">User ID</label>
                     <input type="text" id="userId" class="form-input" value="user1" placeholder="Enter your user ID">
+                    <div class="user-id-hint">
+                        <i class="fas fa-info-circle"></i> Try with user IDs like <span>user1</span>, <span>user2</span>, <span>user3</span>, etc. (up to <span>user15</span>)
+                    </div>
                 </div>
                 <button id="recommendationBtn" class="btn">
                     <i class="fas fa-magic"></i> Get Recommendations
@@ -998,7 +953,7 @@
         // Function to show toast notification
         function showToast(message, type = 'success') {
             const toast = document.createElement('div');
-            toast.className = `status-message ${type === 'error' ? 'error' : ''} animate__fadeIn`;
+            toast.className = `status-message ${type === 'error' ? 'error' : ''}`;
             toast.style.position = 'fixed';
             toast.style.bottom = '24px';
             toast.style.right = '24px';
@@ -1088,10 +1043,7 @@
                     </div>
                     <div class="product-actions">
                         <button class="btn btn-sm btn-outline view-details-btn">
-                            <i class="fas fa-eye"></i> Details
-                        </button>
-                        <button class="wishlist-btn">
-                            <i class="far fa-heart"></i>
+                            <i class="fas fa-eye"></i> View Details
                         </button>
                     </div>
                 </div>
@@ -1105,23 +1057,6 @@
             
             // Add click event to the whole card to show product details
             card.addEventListener('click', () => showProductDetails(product));
-            
-            // Add click event to wishlist button
-            card.querySelector('.wishlist-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                const icon = e.currentTarget.querySelector('i');
-                if (icon.classList.contains('far')) {
-                    icon.classList.remove('far');
-                    icon.classList.add('fas');
-                    icon.style.color = '#ff6b6b';
-                    showToast(`${product.name} added to wishlist!`);
-                } else {
-                    icon.classList.remove('fas');
-                    icon.classList.add('far');
-                    icon.style.color = '';
-                    showToast(`${product.name} removed from wishlist.`);
-                }
-            });
             
             return card;
         }
@@ -1164,10 +1099,6 @@
                 `<li class="feature-item">${feature}</li>`
             ).join('');
             
-            // Determine if the product has a discount (for display purposes)
-            const hasDiscount = Math.random() > 0.7;
-            const originalPrice = hasDiscount ? (product.price * (1 + Math.random() * 0.3)).toFixed(2) : null;
-            
             // Set modal content
             productDetailContent.innerHTML = `
                 <div class="product-detail-img">${productIcon}</div>
@@ -1175,9 +1106,7 @@
                     <h2 class="product-detail-title">${product.name}</h2>
                     <div class="product-detail-meta">
                         <div class="product-detail-price">
-                            ${hasDiscount ? `<span style="text-decoration: line-through; color: var(--grey-dark); font-size: 1rem; margin-right: 8px;">${originalPrice}</span>` : ''}
                             <span>${product.price.toFixed(2)}</span>
-                            ${hasDiscount ? `<span style="background-color: var(--secondary); color: white; font-size: 0.8rem; padding: 2px 8px; border-radius: 12px; margin-left: 8px;">SALE</span>` : ''}
                         </div>
                         <div class="product-detail-category">${product.category}</div>
                         ${product.rating ? `
@@ -1192,15 +1121,6 @@
                         <ul class="feature-list">
                             ${featureListHTML}
                         </ul>
-                    </div>
-                </div>
-                
-                <div class="product-quantity">
-                    <span class="quantity-label">Quantity:</span>
-                    <div class="quantity-controls">
-                        <button class="quantity-btn" id="decreaseQuantity">-</button>
-                        <input type="number" class="quantity-input" id="quantityInput" value="1" min="1" max="10">
-                        <button class="quantity-btn" id="increaseQuantity">+</button>
                     </div>
                 </div>
                 
@@ -1228,19 +1148,11 @@
                         </div>
                         <div class="tab-pane" id="reviews">
                             <p>Customer reviews will be displayed here. Be the first to review this product!</p>
-                            <div style="margin-top: 16px;">
-                                <button class="btn btn-sm btn-outline">
-                                    <i class="fas fa-star"></i> Write a Review
-                                </button>
-                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div class="modal-actions">
-                    <button class="btn add-to-cart-btn">
-                        <i class="fas fa-shopping-cart"></i> Add to Cart
-                    </button>
                     <button class="btn btn-secondary" id="closeModalBtn">
                         <i class="fas fa-times"></i> Close
                     </button>
@@ -1249,29 +1161,6 @@
             
             // Add event listener to the Close button
             document.getElementById('closeModalBtn').addEventListener('click', closeProductModal);
-            
-            // Add event listeners for quantity controls
-            document.getElementById('decreaseQuantity').addEventListener('click', () => {
-                const input = document.getElementById('quantityInput');
-                const currentValue = parseInt(input.value, 10);
-                if (currentValue > 1) {
-                    input.value = currentValue - 1;
-                }
-            });
-            
-            document.getElementById('increaseQuantity').addEventListener('click', () => {
-                const input = document.getElementById('quantityInput');
-                const currentValue = parseInt(input.value, 10);
-                if (currentValue < 10) {
-                    input.value = currentValue + 1;
-                }
-            });
-            
-            // Add event listener for Add to Cart button
-            document.querySelector('.add-to-cart-btn').addEventListener('click', () => {
-                const quantity = document.getElementById('quantityInput').value;
-                showToast(`Added ${quantity} ${quantity > 1 ? 'items' : 'item'} to cart!`);
-            });
             
             // Add event listeners for tabs
             document.querySelectorAll('.tab-btn').forEach(tab => {
@@ -1306,6 +1195,13 @@
             const userId = userIdInput.value.trim();
             if (!userId) {
                 recommendationErrorText.textContent = 'Please enter a user ID';
+                recommendationError.classList.remove('hidden');
+                return;
+            }
+            
+            // Check if entered user ID is in correct format
+            if (!userId.match(/^user\d+$/)) {
+                recommendationErrorText.textContent = 'Invalid user ID format. Please use formats like "user1", "user2", etc.';
                 recommendationError.classList.remove('hidden');
                 return;
             }
