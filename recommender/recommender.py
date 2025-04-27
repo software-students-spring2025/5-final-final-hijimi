@@ -48,7 +48,7 @@ class RecommendationEngine:
         """Get a user's preferences"""
         user = self.users_df[self.users_df["_id"] == user_id]
         if user.empty:
-            return []
+            return None
         return user.iloc[0].get("preferences", [])
 
     def get_user_interactions(self, user_id):
