@@ -71,3 +71,6 @@ First, install API dependencies:
 ```bash
 cd api
 pip install -r requirements.txt
+cd ../recommender
+pip install -r requirements.txt
+```
