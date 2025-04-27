@@ -5,21 +5,10 @@ on:
   push:
     branches:
       - main
-      - master
-      - xingjian1
-    paths:
-      - 'api/**'
-      - '.github/workflows/api.yml'
-      - 'recommender/**' # Trigger API build if recommender changes, as API imports it
   pull_request:
     branches:
       - main
-      - master
-      - xingjian1
-    paths:
-      - 'api/**'
-      - '.github/workflows/api.yml'
-      - 'recommender/**'
+
 
 jobs:
   test:
@@ -28,6 +17,11 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.9.0
+        with:
+          mongodb-version: '6.0'
+      
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
