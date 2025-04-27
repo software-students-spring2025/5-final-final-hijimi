@@ -184,26 +184,27 @@ class RecommendationEngine:
                     combined_recommendations.append(product)
                     added += 1
 
-        # If still not enough, add popular products (highest rated)
+        # If still not enough, add popular products (mix rating and random)
         remaining_slots = n_recommendations - len(combined_recommendations)
         if remaining_slots > 0:
-            popular_products = []
             if "rating" in self.products_df.columns:
-                popular_df = self.products_df.sort_values("rating", ascending=False)
-                popular_products = popular_df.to_dict("records")
-            else:
-                popular_products = self.products_df.to_dict("records")
+                popular_df = self.products_df.copy()
 
-            # Add only the products not already in combined_recommendations
+                # Mix top-rated + random shuffle 
+                popular_df = popular_df.sort_values("rating", ascending=False)
+
+
+                cutoff = int(len(popular_df) * 0.8)
+                candidate_products = popular_df.iloc[:cutoff].sample(frac=1).to_dict("records")
+            else:
+                candidate_products = self.products_df.sample(frac=1).to_dict("records")
+
             added = 0
-            for product in popular_products:
+            for product in candidate_products:
                 if added >= remaining_slots:
                     break
-                # Check if product is already in combined_recommendations and not interacted with
                 if (
-                    not any(
-                        r["_id"] == product["_id"] for r in combined_recommendations
-                    )
+                    not any(r["_id"] == product["_id"] for r in combined_recommendations)
                     and product["_id"] not in interacted_product_ids
                 ):
                     combined_recommendations.append(product)
