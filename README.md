@@ -51,7 +51,7 @@ See `.env.example` for required environment variables. Create a `.env` file base
 
 *(Ensure this section provides clear instructions as per instructions.md)*
 
-# 📋 How to Run Unit Tests
+#  How to Run Unit Tests
 
 This project has two main components to test:
 
@@ -62,7 +62,7 @@ Both components have their own tests and requirements.
 
 ---
 
-### 🛠 Install Dependencies
+###  Install Dependencies
 
 You need to install dependencies for both components separately.
 
