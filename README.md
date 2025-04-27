@@ -50,3 +50,24 @@
 See `.env.example` for required environment variables. Create a `.env` file based on the example and populate it with your configuration and secrets.
 
 *(Ensure this section provides clear instructions as per instructions.md)*
+
+# 📋 How to Run Unit Tests
+
+This project has two main components to test:
+
+- **api/** — FastAPI web service (`app.py`)
+- **recommender/** — Machine learning recommendation engine (`recommender.py`)
+
+Both components have their own tests and requirements.
+
+---
+
+### 🛠 Install Dependencies
+
+You need to install dependencies for both components separately.
+
+First, install API dependencies:
+
+```bash
+cd api
+pip install -r requirements.txt
