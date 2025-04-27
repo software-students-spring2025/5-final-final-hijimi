@@ -71,6 +71,13 @@ First, install API dependencies:
 ```bash
 cd api
 pip install -r requirements.txt
+pytest --cov=api tests/ --cov-report=term-missing
+```
+
+Then, install Recommender dependencies:
+```bash
 cd ../recommender
 pip install -r requirements.txt
+pytest --cov=recommender tests/ --cov-report=term-missing
 ```
+
