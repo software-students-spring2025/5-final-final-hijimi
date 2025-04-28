@@ -115,7 +115,7 @@ This command:
 4. Starts all services in the correct order
 
 ### Access the Application
-* **Frontend Interface**: http://localhost:8080
+* **Frontend Interface**: http://localhost:8081
 * **API Documentation**: http://localhost:8000/docs
 * **API Health Check**: http://localhost:8000/health
 
