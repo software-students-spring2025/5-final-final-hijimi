@@ -17,7 +17,7 @@
 *   **MongoDB:** Database for products, users, and interactions.
 *   **Recommender (Python):** Generates product recommendations.
 *   **API (Python/FastAPI):** Serves recommendations via a RESTful API.
-*   **Frontend (HTML/JS/Nginx):** Simple web interface to display recommendations.
+*   **Frontend (HTML/JS/Nginx):** Web interface to display recommendations.
 
 ## Docker Hub Images
 
