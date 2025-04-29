@@ -190,6 +190,9 @@ docker-compose up -d mongodb
 cd api
 MONGO_URI=mongodb://localhost:27017/mydatabase uvicorn app:app --reload
 ```
+## 🐳 Digital Ocean
+
+* [Digital Ocean](https://starfish-app-nwv2x.ondigitalocean.app/)
 
 ## 📊 How the Recommendation Engine Works
 
