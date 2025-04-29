@@ -33,22 +33,11 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          # Create dummy test file if none exists, to avoid command failure
           mkdir -p recommender/tests
-          touch recommender/tests/test_placeholder.py 
+          touch recommender/tests/test_placeholder.py
           echo "def test_placeholder(): pass" > recommender/tests/test_placeholder.py
-          # Run pytest with coverage - needs actual tests in recommender/tests/
-          pytest recommender/tests/ --cov=recommender --cov-report=xml 
-        # This command will fail if coverage is below 80% after you add real tests
-        # You need to create actual test files in recommender/tests/
-
-      # Optional: Upload coverage report
-      # - name: Upload coverage reports to Codecov
-      #   uses: codecov/codecov-action@v3
-      #   with:
-      #     token: ${{ secrets.CODECOV_TOKEN }} # If using Codecov
-      #     files: ./coverage.xml 
-      #     fail_ci_if_error: true 
+          pytest -v --cov=recommender recommender/tests/ --cov-report=xml --cov-report=term
+      
 
   build-and-push:
     needs: test # Run tests before building
