@@ -58,13 +58,12 @@ An elegant, responsive interface providing:
 * Adaptive design for all devices
 
 ## 🐳 Docker Hub Images
+All Docker images are hosted on Docker Hub:
 
-All components are containerized for consistent deployment:
-
-* **MongoDB**: `docker pull ccdyk/5-final-final-hijimi-mongodb:latest`
-* **Recommender**: `docker pull ccdyk/5-final-final-hijimi-recommender:latest`
-* **API**: `docker pull ccdyk/5-final-final-hijimi-api:latest`
-* **Frontend**: `docker pull ccdyk/5-final-final-hijimi-frontend:latest`
+- [Frontend](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-frontend)
+- [MongoDB](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-mongodb)
+- [API](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-api)
+- [Recommender](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-recommender)
 
 ## 🚀 Setup & Running
 
@@ -145,11 +144,19 @@ docker-compose up -d
 ### Running Unit Tests
 Our codebase maintains >80% test coverage for all components.
 
+Before running tests, ensure that MongoDB is running locally.
+
+If you have Docker installed, you can start a MongoDB instance by running:
+
+```bash
+docker run -d --name local-mongo -p 27017:27017 mongo
+```
+
 #### API Tests
 ```bash
 cd api
 pip install -r requirements.txt
-pytest --cov=api tests/ --cov-report=term-missing
+pytest -v --cov=api tests/ --cov-report=xml --cov-report=term
 ```
 
 #### Recommender Tests

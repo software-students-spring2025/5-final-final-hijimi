@@ -37,15 +37,8 @@ jobs:
         
       - name: Run tests with coverage
         run: |
-          # Create dummy test file if none exists
-          mkdir -p api/tests
-          touch api/tests/test_placeholder.py
-          echo "def test_placeholder(): pass" > api/tests/test_placeholder.py
-          # Run pytest with coverage - needs actual tests in api/tests/
-          # Ensure PYTHONPATH includes recommender if tests import from it directly
           export PYTHONPATH=$(pwd):$(pwd)/recommender
-          pytest api/tests/ --cov=api --cov-report=xml
-        # Add real tests covering API endpoints and logic
+          pytest -v --cov=api api/tests/ --cov-report=xml --cov-report=term
 
       # Optional: Upload coverage report
       # - name: Upload coverage reports to Codecov
