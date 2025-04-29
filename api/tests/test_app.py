@@ -67,11 +67,15 @@ def test_health_check_failure(mock_client):
     assert "Service Unavailable" in response.text
 
 @patch("api.app.db")
-def test_get_all_products_failure(mock_db):
-    mock_db.products.find.side_effect = Exception("DB error")
+def test_get_all_products(mock_db):
+    mock_db.products.find.return_value = [
+        {"_id": "prod1", "name": "Product 1"},
+        {"_id": "prod2", "name": "Product 2"}
+    ]
     response = client.get("/products")
-    assert response.status_code == 500
-    assert "Internal server error" in response.text
+    assert response.status_code == 200
+    assert isinstance(response.json(), list)
+    assert len(response.json()) == 2
 
 @patch("api.app.get_recommendations")
 def test_get_user_recommendations_error(mock_get_recommendations):

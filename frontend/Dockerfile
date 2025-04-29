@@ -1,4 +1,4 @@
-# Use the official Nginx image
+# Use the official Nginx image 
 FROM nginx:stable-alpine
 
 # Copy the frontend static files (HTML, CSS, JS) into the Nginx html directory

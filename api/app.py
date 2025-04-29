@@ -97,14 +97,15 @@ def get_user_recommendations(user_id: str, limit: int = 5):
         raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
 
 @app.get("/products")
-def get_all_products(limit: int = 10):
-     """Endpoint to get a list of products."""
+def get_all_products():
+     """Endpoint to get a list of all products."""
      try:
-         products = list(db.products.find().limit(limit))
+         products = list(db.products.find())
          return parse_json(products)
      except Exception as e:
          print(f"Error in /products: {e}")
          raise HTTPException(status_code=500, detail=f"Internal server error: {e}")
+
 
 # Health check endpoint
 @app.get("/health")
