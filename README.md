@@ -9,7 +9,7 @@ Our system doesn't just suggest products; it creates meaningful connections betw
 ## 👥 Team Members
 
 * [Xingjian Zhang](https://github.com/ScottZXJ123) - System Architect & DevOps Lead
-* [Hao Yang](https://github.com/Hao-Yang-Hao) - Machine Learning Engineer
+* [Hao Yang](https://github.com/Hao-Yang-Hao) - Database Engineer
 * [Shenrui Xue](https://github.com/ShenruiXue666) - Backend Developer
 * [Yukun Dong](https://github.com/abccdyk) - Frontend Engineer
 
