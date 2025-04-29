@@ -145,6 +145,13 @@ docker-compose up -d
 ### Running Unit Tests
 Our codebase maintains >80% test coverage for all components.
 
+Before running tests, ensure that MongoDB is running locally.
+
+If you have Docker installed, you can start a MongoDB instance by running:
+
+```bash
+docker run -d --name local-mongo -p 27017:27017 mongo
+
 #### API Tests
 ```bash
 cd api
