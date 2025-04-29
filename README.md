@@ -58,13 +58,13 @@ An elegant, responsive interface providing:
 * Adaptive design for all devices
 
 ## 🐳 Docker Hub Images
+All Docker images are hosted on Docker Hub:
 
-All components are containerized for consistent deployment:
+- [Frontend](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-frontend)
+- [MongoDB](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-mongodb)
+- [API](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-api)
+- [Recommender](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-recommender)
 
-* **MongoDB**: `docker pull scottz1234/ecommerce-mongodb:latest`
-* **Recommender**: `docker pull scottz1234/ecommerce-recommender:latest`
-* **API**: `docker pull scottz1234/ecommerce-api:latest`
-* **Frontend**: `docker pull scottz1234/ecommerce-frontend:latest`
 
 ## 🚀 Setup & Running
 
