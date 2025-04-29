@@ -927,7 +927,9 @@
 
     <script>
         // API URL 
-        const API_BASE_URL = 'http://localhost:8000';
+        const API_BASE_URL = window.location.hostname.includes('localhost')
+              ? 'http://localhost:8000'
+              : 'https://starfish-app-nwv2x.ondigitalocean.app';
         
         // DOM elements
         const userIdInput = document.getElementById('userId');
