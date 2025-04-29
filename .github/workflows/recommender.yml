@@ -33,10 +33,7 @@ jobs:
 
       - name: Run tests with coverage
         run: |
-          mkdir -p recommender/tests
-          touch recommender/tests/test_placeholder.py
-          echo "def test_placeholder(): pass" > recommender/tests/test_placeholder.py
-          pytest -v --cov=recommender recommender/tests/ --cov-report=xml --cov-report=term
+           pytest -v --cov=recommender/recommender.py --cov-branch --cov-report=xml --cov-report=term recommender/tests/
       
 
   build-and-push:
