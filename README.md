@@ -151,6 +151,7 @@ If you have Docker installed, you can start a MongoDB instance by running:
 
 ```bash
 docker run -d --name local-mongo -p 27017:27017 mongo
+```
 
 #### API Tests
 ```bash
