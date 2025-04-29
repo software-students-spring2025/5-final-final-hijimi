@@ -1,4 +1,4 @@
-
+# .github/workflows/frontend.yml  
 name: Frontend CI/CD
 
 on:
@@ -50,17 +50,19 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend:buildcache,mode=max
 
-    deploy:
-      needs: build-and-push
-      runs-on: ubuntu-latest
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
-      steps:
-        - name: Set up DO CLI
-          uses: digitalocean/action-doctl@v2
-          with:
-            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-  
-        - name: Deploy to DigitalOcean App Platform
-          run: |
-            doctl apps create-deployment 95995d36-a9a9-433c-844b-517dca4d7e7e \
-              --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
+    steps:
+      - name: Set up DO CLI
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
+
+      - name: Deploy to DigitalOcean App Platform
+        run: |
+          echo "Deploying Frontend to DO... (implement specific steps)"
+          # Example: Trigger a deployment update for a DO App
+          # doctl apps create-deployment <YOUR_APP_ID> --from-registry ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend
+          # Replace <YOUR_APP_ID> with your actual DigitalOcean App ID 
