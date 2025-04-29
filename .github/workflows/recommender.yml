@@ -66,20 +66,15 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:buildcache,mode=max
 
-  # Placeholder for deployment
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - name: Set up DO CLI
+      - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
-      
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          
       - name: Deploy to DigitalOcean
-        run: |
-          echo "Deploying Recommender to DO... (implement specific steps)"
-          echo "This might involve updating a service or running a one-off task like training."
-          # Example using doctl (requires setup and authentication)
-          # doctl apps create-deployment <APP_ID> --from-registry <your-dockerhub-repo>/ecommerce-recommender
+        run: doctl apps create-deployment ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
