@@ -1,6 +1,10 @@
 import pytest
 from unittest.mock import patch, MagicMock
-import recommender.recommender as recommender_module
+import sys
+import os
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
+import recommender as recommender_module
+
 
 
 @pytest.fixture
