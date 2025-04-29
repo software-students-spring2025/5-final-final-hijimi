@@ -1,12 +1,7 @@
 import pytest
 from unittest.mock import patch, MagicMock
 import recommender.recommender as recommender_module
-from recommender.recommender import RecommendationEngine, get_recommendations
 
-
-def test_dummy():
-    engine = RecommendationEngine()
-    assert engine is not None
 
 @pytest.fixture
 def mock_db():
