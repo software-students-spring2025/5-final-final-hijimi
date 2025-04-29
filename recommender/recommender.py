@@ -29,20 +29,19 @@ class RecommendationEngine:
     def load_data(self):
         """Load data from MongoDB into pandas DataFrames"""
         # Load products
-        products = list(db.products.find({}))
-        self.products_df = pd.DataFrame(products) if products else pd.DataFrame()
+        products = list(db.products.find())
+        self.products_df = pd.DataFrame(products)
 
         # Load users
-        users = list(db.users.find({}))
-        self.users_df = pd.DataFrame(users) if users else pd.DataFrame()
+        users = list(db.users.find())
+        self.users_df = pd.DataFrame(users)
 
         # Load interactions
-        interactions = list(db.interactions.find({}))
-        self.interactions_df = pd.DataFrame(interactions) if interactions else pd.DataFrame()
+        interactions = list(db.interactions.find())
+        self.interactions_df = pd.DataFrame(interactions)
 
         print(
-            f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions"
-        )
+            f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions")
 
     def get_user_preferences(self, user_id):
         """Get a user's preferences"""
