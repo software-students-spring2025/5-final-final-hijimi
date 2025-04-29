@@ -90,6 +90,8 @@ jobs:
             scp -r deployment/* root@157.230.224.141:/root/
             
         - name: Deploy to DigitalOcean Droplet
+          env:
+            DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           run: |
             echo "Deploying to DigitalOcean Droplet..."
-            ssh root@157.230.224.141 'cd /root && chmod +x deploy.sh && ./deploy.sh'
+            ssh root@157.230.224.141 "export DIGITALOCEAN_ACCESS_TOKEN='${DIGITALOCEAN_ACCESS_TOKEN}' && cd /root && chmod +x deploy.sh && ./deploy.sh"

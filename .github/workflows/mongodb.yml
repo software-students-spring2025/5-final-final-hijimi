@@ -39,6 +39,35 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-mongodb:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-mongodb:buildcache,mode=max
 
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
+        with:
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          
+      - name: Setup SSH known hosts
+        run: |
+          mkdir -p ~/.ssh
+          echo "157.230.224.141 $(ssh-keyscan -t rsa 157.230.224.141 2>/dev/null | cut -d' ' -f2-)" >> ~/.ssh/known_hosts
+          
+      - name: Copy deployment files to droplet
+        run: |
+          scp -r deployment/* root@157.230.224.141:/root/
+          
+      - name: Deploy to DigitalOcean Droplet
+        env:
+          DIGITALOCEAN_ACCESS_TOKEN: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: |
+          echo "Deploying to DigitalOcean Droplet..."
+          ssh root@157.230.224.141 "export DIGITALOCEAN_ACCESS_TOKEN='${DIGITALOCEAN_ACCESS_TOKEN}' && cd /root && chmod +x deploy.sh && ./deploy.sh"
+
   # Placeholder for deployment - Deploying MongoDB might involve:
   # - Using a managed MongoDB service on DigitalOcean
   # - Setting up a MongoDB instance on a Droplet (less common via simple Docker push)
