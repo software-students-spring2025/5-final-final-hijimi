@@ -3,18 +3,12 @@ name: MongoDB CI/CD
 
 on:
   push:
-    branches:
-      - main
-      - master
-      - xingjian1
+    branches: [main, master]
     paths:
       - 'mongodb/**'
       - '.github/workflows/mongodb.yml'
   pull_request:
-    branches:
-      - main
-      - master
-      - xingjian1
+    branches: [main, master]
     paths:
       - 'mongodb/**'
       - '.github/workflows/mongodb.yml'
