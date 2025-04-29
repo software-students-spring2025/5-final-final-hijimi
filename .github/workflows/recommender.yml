@@ -1,4 +1,4 @@
-# .github/workflows/recommender.yml 
+# .github/workflows/recommender.yml
 name: Recommender CI/CD
 
 on:
@@ -22,29 +22,26 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v3
         with:
-          python-version: '3.9' 
+          python-version: '3.9'
 
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r recommender/requirements.txt
-          pip install pytest pytest-cov # Add test dependencies
-        # Add any other testing dependencies (e.g., mock)
+          pip install pytest pytest-cov
 
       - name: Run tests with coverage
         run: |
           mkdir -p recommender/tests
           touch recommender/tests/test_placeholder.py
           echo "def test_placeholder(): pass" > recommender/tests/test_placeholder.py
-          pytest -v --cov=recommender --cov-omit=recommender/train.py recommender/tests/ --cov-report=xml --cov-report=term
-
-
-      
+          pytest -v --cov=recommender recommender/tests/ --cov-report=xml --cov-report=term --cov-fail-under=80
+        
 
   build-and-push:
-    needs: test # Run tests before building
+    needs: test
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' # Only build/push on merge/push to main/master
+    if: github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -55,8 +52,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }} # Needs to be configured in GitHub Secrets
-          password: ${{ secrets.DOCKERHUB_TOKEN }}    # Needs to be configured in GitHub Secrets
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Recommender image
         uses: docker/build-push-action@v4
@@ -64,11 +61,10 @@ jobs:
           context: ./recommender
           file: ./recommender/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:latest # Replace with your Docker Hub username
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:latest
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:buildcache,mode=max
 
-  # Placeholder for deployment
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
@@ -77,11 +73,4 @@ jobs:
       - name: Set up DO CLI
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
-      
-      - name: Deploy to DigitalOcean
-        run: |
-          echo "Deploying Recommender to DO... (implement specific steps)"
-          echo "This might involve updating a service or running a one-off task like training."
-          # Example using doctl (requires setup and authentication)
-          # doctl apps create-deployment <APP_ID> --from-registry <your-dockerhub-repo>/ecommerce-recommender
+          token: ${{
