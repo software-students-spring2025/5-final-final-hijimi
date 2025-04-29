@@ -61,10 +61,10 @@ An elegant, responsive interface providing:
 
 All components are containerized for consistent deployment:
 
-* **MongoDB**: `docker pull scottz1234/ecommerce-mongodb:latest`
-* **Recommender**: `docker pull scottz1234/ecommerce-recommender:latest`
-* **API**: `docker pull scottz1234/ecommerce-api:latest`
-* **Frontend**: `docker pull scottz1234/ecommerce-frontend:latest`
+* **MongoDB**: `docker pull ccdyk/5-final-final-hijimi-mongodb:latest`
+* **Recommender**: `docker pull ccdyk/5-final-final-hijimi-recommender:latest`
+* **API**: `docker pull ccdyk/5-final-final-hijimi-api:latest`
+* **Frontend**: `docker pull ccdyk/5-final-final-hijimi-frontend:latest`
 
 ## 🚀 Setup & Running
 
