@@ -53,16 +53,21 @@ jobs:
   deploy:
     needs: build-and-push
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master')
     steps:
-      - name: Set up DO CLI
+      - name: Install doctl
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
-      - name: Deploy to DigitalOcean App Platform
+      - name: Deploy to DigitalOcean
         run: |
-          echo "Deploying Frontend to DO... (implement specific steps)"
-          # Example: Trigger a deployment update for a DO App
-          # doctl apps create-deployment <YOUR_APP_ID> --from-registry ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend
-          # Replace <YOUR_APP_ID> with your actual DigitalOcean App ID 
+          # Get first app ID
+          APP_ID=$(doctl apps list --format ID --no-header | head -n 1)
+          if [ -n "$APP_ID" ]; then
+            echo "Deploying to app with ID: $APP_ID"
+            doctl apps create-deployment $APP_ID
+          else
+            echo "No DigitalOcean apps found. Please create an app first."
+            exit 1
+          fi 

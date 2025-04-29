@@ -77,4 +77,13 @@ jobs:
           token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
           
       - name: Deploy to DigitalOcean
-        run: doctl apps create-deployment ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+        run: |
+          # Get first app ID
+          APP_ID=$(doctl apps list --format ID --no-header | head -n 1)
+          if [ -n "$APP_ID" ]; then
+            echo "Deploying to app with ID: $APP_ID"
+            doctl apps create-deployment $APP_ID
+          else
+            echo "No DigitalOcean apps found. Please create an app first."
+            exit 1
+          fi
