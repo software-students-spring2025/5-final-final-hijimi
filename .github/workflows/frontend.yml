@@ -45,12 +45,24 @@ jobs:
     runs-on: ubuntu-latest
     if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
     steps:
-      - name: Set up DO CLI
-        uses: digitalocean/action-doctl@v2
+      - name: Checkout code
+        uses: actions/checkout@v3
+        
+      - name: Set up SSH
+        uses: webfactory/ssh-agent@v0.7.0
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-
-      - name: Deploy to DigitalOcean App Platform
+          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          
+      - name: Setup SSH known hosts
         run: |
-          echo "Deploying Frontend to DigitalOcean..."
-          doctl apps create-deployment 95995d36-a9a9-433c-844b-517dca4d7e7e --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+          mkdir -p ~/.ssh
+          echo "157.230.224.141 $(ssh-keyscan -t rsa 157.230.224.141 2>/dev/null | cut -d' ' -f2-)" >> ~/.ssh/known_hosts
+          
+      - name: Copy deployment files to droplet
+        run: |
+          scp -r deployment/* root@157.230.224.141:/root/
+          
+      - name: Deploy to DigitalOcean Droplet
+        run: |
+          echo "Deploying to DigitalOcean Droplet..."
+          ssh root@157.230.224.141 'cd /root && chmod +x deploy.sh && ./deploy.sh'
