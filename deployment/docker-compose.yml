@@ -1,0 +1,55 @@
+version: '3.8'
+
+services:
+  mongodb:
+    image: scottz1234/ecommerce-mongodb:latest
+    container_name: ecommerce-mongodb
+    environment:
+      MONGO_INITDB_DATABASE: mydatabase
+    volumes:
+      - mongodb_data:/data/db
+    ports:
+      - "27017:27017" 
+    networks:
+      - ecommerce-network
+
+  recommender:
+    image: scottz1234/ecommerce-recommender:latest
+    container_name: ecommerce-recommender
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/mydatabase
+    volumes:
+      - recommender_data:/app/data
+    depends_on:
+      - mongodb
+    networks:
+      - ecommerce-network
+
+  api:
+    image: scottz1234/ecommerce-api:latest
+    container_name: ecommerce-api
+    environment:
+      MONGO_URI: mongodb://mongodb:27017/mydatabase
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+      - recommender
+    networks:
+      - ecommerce-network
+
+  frontend:
+    image: scottz1234/ecommerce-frontend:latest
+    container_name: ecommerce-frontend
+    ports:
+      - "80:80"
+    networks:
+      - ecommerce-network
+
+networks:
+  ecommerce-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+  recommender_data: 
