@@ -1,3 +1,25 @@
+Skip to content
+Navigation Menu
+software-students-spring2025
+5-final-final-hijimi
+
+Type / to search
+Code
+Issues
+Pull requests
+1
+Actions
+Projects
+Wiki
+Security
+Insights
+Settings
+API CI/CD
+Merge pull request #35 from software-students-spring2025/Shenrui-888 #100
+Jobs
+Run details
+Workflow file for this run
+.github/workflows/api.yml at 389eaef
 # .github/workflows/api.yml  
 name: API CI/CD
 
@@ -39,7 +61,6 @@ jobs:
         run: |
           export PYTHONPATH=$(pwd):$(pwd)/recommender
           pytest -v --cov=api api/tests/ --cov-report=xml --cov-report=term
-
       # Optional: Upload coverage report
       # - name: Upload coverage reports to Codecov
       #   uses: codecov/codecov-action@v3
@@ -75,17 +96,21 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-api:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-api:buildcache,mode=max
 
-    deploy:
-      needs: build-and-push
-      runs-on: ubuntu-latest
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
-      steps:
-        - name: Set up DO CLI
-          uses: digitalocean/action-doctl@v2
-          with:
-            token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
-  
-        - name: Deploy to DigitalOcean App Platform
-          run: |
-            echo "Deploying API to DigitalOcean..."
-            doctl apps create-deployment 95995d36-a9a9-433c-844b-517dca4d7e7e --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian1')
+    steps:
+      - name: Set up DO CLI
+        uses: digitalocean/action-doctl@v2
+        with:
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
+          
+      - name: Deploy to DigitalOcean App Platform
+        run: |
+          echo "Deploying API to DO... (implement specific steps)"
+          # Example: Trigger a deployment update for a DO App
+          # Ensure you have doctl installed and configured, or use specific DO actions
+          # doctl apps create-deployment <YOUR_APP_ID> --from-registry ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-api
+          # Replace <YOUR_APP_ID> with your actual DigitalOcean App ID 
+Merge pull request #35 from software-students-spring2025/Shenrui-888 · software-students-spring2025/5-final-final-hijimi@389eaef 
