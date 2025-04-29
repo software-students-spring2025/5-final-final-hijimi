@@ -36,7 +36,8 @@ jobs:
           mkdir -p recommender/tests
           touch recommender/tests/test_placeholder.py
           echo "def test_placeholder(): pass" > recommender/tests/test_placeholder.py
-          pytest -v --cov=recommender recommender/tests/ --cov-report=xml --cov-report=term --cov-omit="recommender/train.py"
+          pytest -v --cov=recommender --cov-omit=recommender/train.py recommender/tests/ --cov-report=xml --cov-report=term
+
 
       
 
