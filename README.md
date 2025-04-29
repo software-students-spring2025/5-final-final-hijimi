@@ -157,7 +157,7 @@ docker run -d --name local-mongo -p 27017:27017 mongo
 ```bash
 cd api
 pip install -r requirements.txt
-pytest --cov=api tests/ --cov-report=term-missing
+pytest -v --cov=api tests/ --cov-report=xml --cov-report=term
 ```
 
 #### Recommender Tests
