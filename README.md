@@ -65,7 +65,6 @@ All Docker images are hosted on Docker Hub:
 - [API](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-api)
 - [Recommender](https://hub.docker.com/r/ccdyk/5-final-final-hijimi-recommender)
 
-
 ## 🚀 Setup & Running
 
 ### Prerequisites
