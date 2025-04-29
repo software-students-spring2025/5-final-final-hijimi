@@ -98,7 +98,7 @@ API_PORT_HOST=8000
 API_PORT_CONTAINER=8000
 
 # Frontend Configuration
-FRONTEND_PORT_HOST=8081
+FRONTEND_PORT_HOST=8080
 FRONTEND_PORT_CONTAINER=80
 ```
 
@@ -114,7 +114,7 @@ This command:
 4. Starts all services in the correct order
 
 ### Access the Application
-* **Frontend Interface**: http://localhost:8081
+* **Frontend Interface**: http://localhost:8080
 * **API Documentation**: http://localhost:8000/docs
 * **API Health Check**: http://localhost:8000/health
 
