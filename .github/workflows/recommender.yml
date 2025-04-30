@@ -80,4 +80,4 @@ jobs:
         - name: Deploy to DigitalOcean
           run: |
             echo "Triggering deployment to DigitalOcean..."
-            doctl apps create-deployment 95995d36-a9a9-433c-844b-517dca4d7e7e --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+            doctl apps create-deployment 3a231e21-242c-4d42-9d1a-663a93c5ef05 --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
