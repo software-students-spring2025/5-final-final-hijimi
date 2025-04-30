@@ -3,9 +3,9 @@ name: Recommender CI/CD
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master,xingjian4]
   pull_request:
-    branches: [main, master]
+    branches: [main, master,xingjian4]
 
 jobs:
   test:
