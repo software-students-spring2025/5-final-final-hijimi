@@ -14,19 +14,9 @@ on:
       - '.github/workflows/frontend.yml'
 
 jobs:
-  # Add a test job if needed (e.g., HTML linting, link checking, JS tests if using a framework)
-  # test:
-  #   runs-on: ubuntu-latest
-  #   steps:
-  #     - name: Checkout code
-  #       uses: actions/checkout@v3
-  #     - name: Run frontend tests/linters (Placeholder)
-  #       run: echo "Running frontend checks... (implement specific steps)"
-
   build-and-push:
-    # needs: test # Uncomment if you add a test job
     runs-on: ubuntu-latest
-    if: github.event_name == 'push' # Only build/push on merge/push to main/master
+    if: github.event_name == 'push'
     steps:
       - name: Checkout code
         uses: actions/checkout@v3
@@ -37,8 +27,8 @@ jobs:
       - name: Login to Docker Hub
         uses: docker/login-action@v2
         with:
-          username: ${{ secrets.DOCKERHUB_USERNAME }} # Needs to be configured in GitHub Secrets
-          password: ${{ secrets.DOCKERHUB_TOKEN }}    # Needs to be configured in GitHub Secrets
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Build and push Frontend image
         uses: docker/build-push-action@v4
@@ -46,7 +36,7 @@ jobs:
           context: ./frontend
           file: ./frontend/Dockerfile
           push: true
-          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend:latest # Replace with your Docker Hub username
+          tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend:latest
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend:buildcache,mode=max
 
@@ -58,11 +48,9 @@ jobs:
       - name: Set up DO CLI
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
 
       - name: Deploy to DigitalOcean App Platform
         run: |
-          echo "Deploying Frontend to DO... (implement specific steps)"
-          # Example: Trigger a deployment update for a DO App
-          # doctl apps create-deployment <YOUR_APP_ID> --from-registry ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-frontend
-          # Replace <YOUR_APP_ID> with your actual DigitalOcean App ID 
+          echo "Deploying Frontend to DigitalOcean..."
+          doctl apps create-deployment 95995d36-a9a9-433c-844b-517dca4d7e7e --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}

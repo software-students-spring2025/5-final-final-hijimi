@@ -7,7 +7,6 @@ on:
   pull_request:
     branches: [main, master]
 
-
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -28,21 +27,14 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          # Install API requirements
           pip install -r api/requirements.txt
-          # Install recommender requirements as API depends on it
           pip install -r recommender/requirements.txt 
-          # Install test dependencies
-          pip install pytest pytest-cov httpx # httpx for testing FastAPI async client
+          pip install pytest pytest-cov httpx
         
       - name: Run tests with coverage
         run: |
           export PYTHONPATH=$(pwd):$(pwd)/recommender
           pytest -v --cov=api api/tests/ --cov-report=xml --cov-report=term
-
-      # Optional: Upload coverage report
-      # - name: Upload coverage reports to Codecov
-      #   uses: codecov/codecov-action@v3
 
   build-and-push:
     needs: test
@@ -65,10 +57,6 @@ jobs:
         uses: docker/build-push-action@v4
         with:
           context: .
-          # Build from root context to include recommender code if needed by Dockerfile COPY
-          # Adjust Dockerfile COPY paths if building from root: COPY api/ /app, COPY recommender/ /app/recommender
-          # For simplicity now, assuming API Dockerfile only copies api/
-          # If Dockerfile needs recommender/, change context to '.' and adjust Dockerfile COPY
           file: ./api/Dockerfile 
           push: true
           tags: ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-api:latest
@@ -83,12 +71,9 @@ jobs:
       - name: Set up DO CLI
         uses: digitalocean/action-doctl@v2
         with:
-          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }} # Needs DO access token
-          
+          token: ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}
+
       - name: Deploy to DigitalOcean App Platform
         run: |
-          echo "Deploying API to DO... (implement specific steps)"
-          # Example: Trigger a deployment update for a DO App
-          # Ensure you have doctl installed and configured, or use specific DO actions
-          # doctl apps create-deployment <YOUR_APP_ID> --from-registry ${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-api
-          # Replace <YOUR_APP_ID> with your actual DigitalOcean App ID 
+          echo "Deploying API to DigitalOcean..."
+          doctl apps create-deployment 95995d36-a9a9-433c-844b-517dca4d7e7e --access-token ${{ secrets.DIGITALOCEAN_ACCESS_TOKEN }}

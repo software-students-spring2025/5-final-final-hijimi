@@ -9,7 +9,7 @@ Our system doesn't just suggest products; it creates meaningful connections betw
 ## 👥 Team Members
 
 * [Xingjian Zhang](https://github.com/ScottZXJ123) - System Architect & DevOps Lead
-* [Hao Yang](https://github.com/Hao-Yang-Hao) - Machine Learning Engineer
+* [Hao Yang](https://github.com/Hao-Yang-Hao) - Database Engineer
 * [Shenrui Xue](https://github.com/ShenruiXue666) - Backend Developer
 * [Yukun Dong](https://github.com/abccdyk) - Frontend Engineer
 
@@ -98,7 +98,7 @@ API_PORT_HOST=8000
 API_PORT_CONTAINER=8000
 
 # Frontend Configuration
-FRONTEND_PORT_HOST=8081
+FRONTEND_PORT_HOST=8080
 FRONTEND_PORT_CONTAINER=80
 ```
 
@@ -114,7 +114,7 @@ This command:
 4. Starts all services in the correct order
 
 ### Access the Application
-* **Frontend Interface**: http://localhost:8081
+* **Frontend Interface**: http://localhost:8080
 * **API Documentation**: http://localhost:8000/docs
 * **API Health Check**: http://localhost:8000/health
 
@@ -190,6 +190,9 @@ docker-compose up -d mongodb
 cd api
 MONGO_URI=mongodb://localhost:27017/mydatabase uvicorn app:app --reload
 ```
+## 🐳 Digital Ocean
+
+* [Digital Ocean](https://starfish-app-nwv2x.ondigitalocean.app/)
 
 ## 📊 How the Recommendation Engine Works
 
