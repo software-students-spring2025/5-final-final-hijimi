@@ -3,8 +3,10 @@ import json
 import pandas as pd
 import numpy as np
 from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 from bson import json_util
 from collections import Counter
+import time
 
 # Import necessary libraries for your chosen recommendation algorithm (e.g., scikit-learn)
 
@@ -13,9 +15,30 @@ from collections import Counter
 MONGO_URI = os.getenv("MONGO_URI", "mongodb://mongodb:27017/mydatabase")
 # For local development, you can use: mongodb://localhost:27017/mydatabase
 # For Docker or cloud deployment: mongodb://mongodb:27017/mydatabase (service name)
-client = MongoClient(MONGO_URI)
-db = client.get_database()
 
+# Add retry logic for MongoDB connection
+max_retries = 30
+retry_interval = 2
+client = None
+db = None
+
+for attempt in range(max_retries):
+    try:
+        print(f"Attempting to connect to MongoDB at {MONGO_URI} (attempt {attempt+1}/{max_retries})")
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        # Force a connection to verify it works
+        client.admin.command('ping')
+        db = client.get_database()
+        print("Successfully connected to MongoDB")
+        break
+    except (ConnectionFailure, ServerSelectionTimeoutError) as e:
+        print(f"Failed to connect to MongoDB: {e}")
+        if attempt < max_retries - 1:
+            print(f"Retrying in {retry_interval} seconds...")
+            time.sleep(retry_interval)
+        else:
+            print("Maximum retry attempts reached. Could not connect to MongoDB.")
+            # Instead of failing hard, we'll allow the app to start but recommendations won't work
 
 # Helper function to parse MongoDB BSON to JSON-serializable format
 def parse_json(data):
@@ -31,21 +54,34 @@ class RecommendationEngine:
 
     def load_data(self):
         """Load data from MongoDB into pandas DataFrames"""
-        # Load products
-        products = list(db.products.find())
-        self.products_df = pd.DataFrame(products)
+        if db is None:
+            print("Database connection not available. Using empty DataFrames.")
+            self.products_df = pd.DataFrame()
+            self.users_df = pd.DataFrame()
+            self.interactions_df = pd.DataFrame()
+            return
+        
+        try:
+            # Load products
+            products = list(db.products.find())
+            self.products_df = pd.DataFrame(products) if products else pd.DataFrame()
 
-        # Load users
-        users = list(db.users.find())
-        self.users_df = pd.DataFrame(users)
+            # Load users
+            users = list(db.users.find())
+            self.users_df = pd.DataFrame(users) if users else pd.DataFrame()
 
-        # Load interactions
-        interactions = list(db.interactions.find())
-        self.interactions_df = pd.DataFrame(interactions)
+            # Load interactions
+            interactions = list(db.interactions.find())
+            self.interactions_df = pd.DataFrame(interactions) if interactions else pd.DataFrame()
 
-        print(
-            f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions"
-        )
+            print(
+                f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions"
+            )
+        except Exception as e:
+            print(f"Error loading data from MongoDB: {e}")
+            self.products_df = pd.DataFrame()
+            self.users_df = pd.DataFrame()
+            self.interactions_df = pd.DataFrame()
 
     def get_user_preferences(self, user_id):
         """Get a user's preferences"""

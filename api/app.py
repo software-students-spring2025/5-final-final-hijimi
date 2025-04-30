@@ -1,9 +1,11 @@
 import os
 import sys
+import time
 from fastapi import FastAPI, HTTPException
 # Add CORSMiddleware
 from fastapi.middleware.cors import CORSMiddleware
 from pymongo import MongoClient
+from pymongo.errors import ConnectionFailure, ServerSelectionTimeoutError
 from bson import json_util
 import json
 
@@ -50,6 +52,7 @@ origins = [
     "http://localhost",       # Sometimes needed depending on browser/setup
     "http://157.230.224.141", # Digital Ocean Droplet IP address
     "http://ecommerce-app",   # Container name if needed
+    "http://143.244.170.102:8080", # New server IP
     "*",                      # Allow all origins during development (remove in production)
 ]
 
@@ -65,10 +68,32 @@ app.add_middleware(
 # Connect to MongoDB - Support both local and cloud deployment
 # The environment variable will be set in the deployment environment
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/mydatabase')
-# For local development: mongodb://localhost:27017/mydatabase
-# For Docker or cloud deployment: mongodb://mongodb:27017/mydatabase (service name)
-client = MongoClient(MONGO_URI)
-db = client.get_database()
+
+# Add retry logic for MongoDB connection
+max_retries = 30
+retry_interval = 2
+client = None
+db = None
+
+print(f"API starting up, connecting to MongoDB at {MONGO_URI}")
+
+for attempt in range(max_retries):
+    try:
+        print(f"Attempting to connect to MongoDB (attempt {attempt+1}/{max_retries})")
+        client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
+        # Force a connection to verify it works
+        client.admin.command('ping')
+        db = client.get_database()
+        print("Successfully connected to MongoDB")
+        break
+    except (ConnectionFailure, ServerSelectionTimeoutError) as e:
+        print(f"Failed to connect to MongoDB: {e}")
+        if attempt < max_retries - 1:
+            print(f"Retrying in {retry_interval} seconds...")
+            time.sleep(retry_interval)
+        else:
+            print("Maximum retry attempts reached. API will start but some features won't work.")
+            # We'll allow the API to start but endpoints that need DB access will return errors
 
 @app.get("/")
 def read_root():
@@ -77,6 +102,9 @@ def read_root():
 @app.get("/recommendations/{user_id}")
 def get_user_recommendations(user_id: str, limit: int = 5):
     """Endpoint to get product recommendations for a specific user."""
+    if client is None or db is None:
+        raise HTTPException(status_code=503, detail="Database connection not available")
+        
     try:
         # Call the recommendation logic from the recommender module
         recommendations = get_recommendations(user_id, n_recommendations=limit)
@@ -102,6 +130,9 @@ def get_user_recommendations(user_id: str, limit: int = 5):
 @app.get("/products")
 def get_all_products():
      """Endpoint to get a list of all products."""
+     if client is None or db is None:
+        raise HTTPException(status_code=503, detail="Database connection not available")
+         
      try:
          products = list(db.products.find())
          return parse_json(products)
@@ -113,12 +144,15 @@ def get_all_products():
 # Health check endpoint
 @app.get("/health")
 def health_check():
+    if client is None:
+        return {"status": "error", "database": "not connected"}
+        
     try:
         # Check DB connection
         client.admin.command('ping')
         return {"status": "ok", "database": "connected"}
     except Exception as e:
-        raise HTTPException(status_code=503, detail=f"Service Unavailable: Cannot connect to database - {e}")
+        return {"status": "error", "database": f"failed: {str(e)}"}
 
 # You might want to run this using Uvicorn: 
 # uvicorn api.app:app --host 0.0.0.0 --port 8000 --reload 

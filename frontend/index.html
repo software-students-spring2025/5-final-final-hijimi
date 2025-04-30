@@ -932,9 +932,12 @@
             if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
                 return 'http://localhost:8000';
             }
-            // Check if running on DigitalOcean droplet by IP
+            // Check if running on DigitalOcean droplet by specific IPs
             else if (window.location.hostname === '157.230.224.141') {
                 return 'http://157.230.224.141:8000';
+            }
+            else if (window.location.hostname === '143.244.170.102') {
+                return 'http://143.244.170.102:8000';
             }
             // Fallback for any other host
             else {
