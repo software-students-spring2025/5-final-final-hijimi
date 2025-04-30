@@ -26,8 +26,12 @@ except ImportError:
         # Simple fallback: return empty list or generic popular items from DB if accessible
         try:
              # Connect to MongoDB (consider centralizing connection logic)
-             MONGO_URI = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/mydatabase') # Use service name
-             client = MongoClient(MONGO_URI)
+             MONGO_URI = os.getenv("MONGO_URI")
+             if not MONGO_URI:
+                raise ValueError("MONGO_URI is not set in environment variables.")
+
+             client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True if "mongodb+srv" in MONGO_URI else False)
+
              db = client.get_database()
              popular_products = list(db.products.find().limit(n_recommendations))
              # Convert BSON ObjectId before returning from fallback
@@ -63,9 +67,13 @@ app.add_middleware(
 
 # Connect to MongoDB
 # Use the service name 'mongodb' from docker-compose or Kubernetes
-MONGO_URI = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/mydatabase')
-client = MongoClient(MONGO_URI)
-db = client.get_database()
+MONGO_URI = os.getenv("MONGO_URI")
+if not MONGO_URI:
+    raise ValueError("MONGO_URI is not set in environment variables.")
+
+client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True if "mongodb+srv" in MONGO_URI else False)
+db = client.get_default_database()
+
 
 @app.get("/")
 def read_root():

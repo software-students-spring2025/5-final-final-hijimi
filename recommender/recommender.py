@@ -9,8 +9,10 @@ from collections import Counter
 # Import necessary libraries for your chosen recommendation algorithm (e.g., scikit-learn)
 
 # Connect to MongoDB
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/mydatabase")
-client = MongoClient(MONGO_URI)
+MONGO_URI = os.getenv("MONGO_URI")
+if not MONGO_URI:
+    raise EnvironmentError("MONGO_URI is not set in environment variables.")
+client = MongoClient(MONGO_URI, tls=True, tlsAllowInvalidCertificates=True)
 db = client.get_database()
 
 

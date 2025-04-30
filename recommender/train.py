@@ -5,9 +5,12 @@ import pandas as pd
 # Import necessary libraries for training (e.g., scikit-learn, joblib)
 
 # Connect to MongoDB
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/mydatabase")
+MONGO_URI = os.getenv("MONGO_URI")
+if not MONGO_URI:
+    raise ValueError("MONGO_URI environment variable is not set.")
+
 client = MongoClient(MONGO_URI)
-db = client.get_database()
+db = client.get_default_database()  # Will infer DB from URI path
 
 MODEL_FILE = "recommendation_model.pkl"  # Example filename to save the model
 

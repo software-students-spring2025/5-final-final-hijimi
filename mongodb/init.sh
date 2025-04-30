@@ -31,19 +31,19 @@ echo "Using database: $DB_NAME"
 
 # Import each collection individually
 echo "Importing products collection..."
-mongoimport --host localhost --port 27017 --db "$DB_NAME" --collection products --file /tmp/products.json --jsonArray
+mongoimport --uri "$MONGO_URI" --db "$DB_NAME" --collection products --file /tmp/products.json --jsonArray
 
 echo "Importing users collection..."
-mongoimport --host localhost --port 27017 --db "$DB_NAME" --collection users --file /tmp/users.json --jsonArray
+mongoimport --uri "$MONGO_URI" --db "$DB_NAME" --collection users --file /tmp/users.json --jsonArray
 
 echo "Importing interactions collection..."
-mongoimport --host localhost --port 27017 --db "$DB_NAME" --collection interactions --file /tmp/interactions.json --jsonArray
+mongoimport --uri "$MONGO_URI" --db "$DB_NAME" --collection interactions --file /tmp/interactions.json --jsonArray
 
 # Verify data was imported
 echo "Verifying data import:"
-mongosh --quiet --host localhost --port 27017 "$DB_NAME" --eval "db.products.count()"
-mongosh --quiet --host localhost --port 27017 "$DB_NAME" --eval "db.users.count()"
-mongosh --quiet --host localhost --port 27017 "$DB_NAME" --eval "db.interactions.count()"
+mongosh --quiet "$MONGO_URI/$DB_NAME" --eval "db.products.count()"
+mongosh --quiet "$MONGO_URI/$DB_NAME" --eval "db.users.count()"
+mongosh --quiet "$MONGO_URI/$DB_NAME" --eval "db.interactions.count()"
 
 # Clean up temporary files
 rm /tmp/products.json /tmp/users.json /tmp/interactions.json
