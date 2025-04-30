@@ -1,6 +1,6 @@
 # Final Project
 
-An exercise to put to practice software development teamwork, database integration, containers, deployment, and CI/CD pipelines.
+An exercise to put to practice software development teamwork, database integration, containers, deployment, and CI/CD pipelines.1
 
 ## Requirements
 
