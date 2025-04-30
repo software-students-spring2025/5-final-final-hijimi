@@ -62,21 +62,21 @@ class RecommendationEngine:
             return
         
         try:
-        # Load products
-        products = list(db.products.find())
+            # Load products
+            products = list(db.products.find())
             self.products_df = pd.DataFrame(products) if products else pd.DataFrame()
 
-        # Load users
-        users = list(db.users.find())
+            # Load users
+            users = list(db.users.find())
             self.users_df = pd.DataFrame(users) if users else pd.DataFrame()
 
-        # Load interactions
-        interactions = list(db.interactions.find())
+            # Load interactions
+            interactions = list(db.interactions.find())
             self.interactions_df = pd.DataFrame(interactions) if interactions else pd.DataFrame()
 
-        print(
-            f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions"
-        )
+            print(
+                f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions"
+            )
         except Exception as e:
             print(f"Error loading data from MongoDB: {e}")
             self.products_df = pd.DataFrame()
