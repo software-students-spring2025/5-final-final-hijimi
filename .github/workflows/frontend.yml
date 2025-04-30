@@ -3,7 +3,7 @@ name: Frontend CI/CD
 
 on:
   push:
-    branches: [main, master]
+    branches: [main, master,xingajin4]
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend.yml'

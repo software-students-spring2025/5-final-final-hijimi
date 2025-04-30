@@ -75,7 +75,7 @@ class RecommendationEngine:
             self.interactions_df = pd.DataFrame(interactions) if interactions else pd.DataFrame()
 
             print(
-                f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions"
+            f"Loaded {len(self.products_df)} products, {len(self.users_df)} users, {len(self.interactions_df)} interactions"
             )
         except Exception as e:
             print(f"Error loading data from MongoDB: {e}")
