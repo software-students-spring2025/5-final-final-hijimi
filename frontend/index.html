@@ -926,10 +926,22 @@
     </div>
 
     <script>
-        // API URL 
-        const API_BASE_URL = window.location.hostname.includes('localhost')
-              ? 'http://localhost:8000'
-              : 'https://starfish-app-nwv2x.ondigitalocean.app';
+        // API URL - Support both local and cloud deployment
+        const API_BASE_URL = (() => {
+            // Check if running locally
+            if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
+                return 'http://localhost:8000';
+            }
+            // Check if running on DigitalOcean droplet by IP
+            else if (window.location.hostname === '157.230.224.141') {
+                return 'http://157.230.224.141:8000';
+            }
+            // Fallback for any other host
+            else {
+                // Try to use same host with different port
+                return `${window.location.protocol}//${window.location.hostname}:8000`;
+            }
+        })();
         
         // DOM elements
         const userIdInput = document.getElementById('userId');

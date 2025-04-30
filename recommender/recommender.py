@@ -8,8 +8,11 @@ from collections import Counter
 
 # Import necessary libraries for your chosen recommendation algorithm (e.g., scikit-learn)
 
-# Connect to MongoDB
-MONGO_URI = os.getenv("MONGO_URI", "mongodb://localhost:27017/mydatabase")
+# Connect to MongoDB - Support both local and cloud deployment
+# The environment variable will be set in the deployment environment
+MONGO_URI = os.getenv("MONGO_URI", "mongodb://mongodb:27017/mydatabase")
+# For local development, you can use: mongodb://localhost:27017/mydatabase
+# For Docker or cloud deployment: mongodb://mongodb:27017/mydatabase (service name)
 client = MongoClient(MONGO_URI)
 db = client.get_database()
 

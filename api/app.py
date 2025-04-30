@@ -45,11 +45,12 @@ app = FastAPI(
 # --- CORS Configuration ---
 # Define allowed origins (where the frontend is running)
 origins = [
-    "http://localhost:8080", # Frontend origin when running locally
-    "http://localhost:8081", # Frontend running on port 8081
-    "http://localhost",      # Sometimes needed depending on browser/setup
-    # Add the URL of your deployed frontend on Digital Ocean later
-    # "https://your-deployed-frontend-url.com", 
+    "http://localhost:8080",  # Frontend origin when running locally
+    "http://localhost:8081",  # Frontend running on port 8081
+    "http://localhost",       # Sometimes needed depending on browser/setup
+    "http://157.230.224.141", # Digital Ocean Droplet IP address
+    "http://ecommerce-app",   # Container name if needed
+    "*",                      # Allow all origins during development (remove in production)
 ]
 
 app.add_middleware(
@@ -61,9 +62,11 @@ app.add_middleware(
 )
 # --- End CORS Configuration ---
 
-# Connect to MongoDB
-# Use the service name 'mongodb' from docker-compose or Kubernetes
+# Connect to MongoDB - Support both local and cloud deployment
+# The environment variable will be set in the deployment environment
 MONGO_URI = os.getenv('MONGO_URI', 'mongodb://mongodb:27017/mydatabase')
+# For local development: mongodb://localhost:27017/mydatabase
+# For Docker or cloud deployment: mongodb://mongodb:27017/mydatabase (service name)
 client = MongoClient(MONGO_URI)
 db = client.get_database()
 
