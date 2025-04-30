@@ -83,7 +83,7 @@ for attempt in range(max_retries):
         client = MongoClient(MONGO_URI, serverSelectionTimeoutMS=5000)
         # Force a connection to verify it works
         client.admin.command('ping')
-db = client.get_database()
+        db = client.get_database()
         print("Successfully connected to MongoDB")
         break
     except (ConnectionFailure, ServerSelectionTimeoutError) as e:
