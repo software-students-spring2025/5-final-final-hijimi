@@ -66,11 +66,11 @@ jobs:
           cache-from: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:buildcache
           cache-to: type=registry,ref=${{ secrets.DOCKERHUB_USERNAME }}/ecommerce-recommender:buildcache,mode=max
 
-  # Placeholder for deployment
+  # Updated deployment job
   deploy:
       needs: build-and-push
       runs-on: ubuntu-latest
-      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian4')
+      if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master' || github.ref == 'refs/heads/xingjian4')  # Include xingjian4 branch
       steps:
         - name: Set up DO CLI
           uses: digitalocean/action-doctl@v2
