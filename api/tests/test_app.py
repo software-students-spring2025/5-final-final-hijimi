@@ -2,10 +2,16 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
-# Using regular patch instead of autospec to avoid connection attempts
-@patch("api.app.client")
-@patch("api.app.db")
-def create_test_client(mock_db, mock_client):
+# Main patch to intercept app initialization
+@patch("api.app.init_mongodb")
+def create_test_client(mock_init_mongodb):
+    # Create mock db and client before importing app
+    mock_db = MagicMock()
+    mock_client = MagicMock()
+    
+    # Set up the return values of init_mongodb
+    mock_init_mongodb.return_value = (mock_client, mock_db)
+    
     # Import app after patching
     from api.app import app
     
@@ -14,12 +20,9 @@ def create_test_client(mock_db, mock_client):
     mock_admin.command.return_value = {"ok": 1}
     mock_client.admin = mock_admin
     
-    # Set up collections
-    mock_products = MagicMock()
-    mock_db.products = mock_products
-    
-    # Ensure no real connections are attempted
-    mock_client._topology = MagicMock()
+    # Set up products collection mock
+    mock_products_collection = MagicMock()
+    mock_db.products = mock_products_collection
     
     return TestClient(app), mock_db, mock_client
 
@@ -57,7 +60,7 @@ def test_get_all_products():
         {"_id": "prod2", "name": "Product 2"}
     ]
     
-    # More complete mock chain
+    # Set up cursor mock
     mock_cursor = MagicMock()
     mock_cursor.limit.return_value = mock_products
     mock_db.products.find.return_value = mock_cursor
@@ -68,7 +71,7 @@ def test_get_all_products():
     assert len(response.json()) == 2
 
 @patch("api.app.get_recommendations")
-def test_get_user_recommendations(mock_get_recommendations):
+def test_get_user_recommendations(mock_get_recommendations, monkeypatch):
     client, *_ = create_test_client()
     
     # Set up recommendation test data
