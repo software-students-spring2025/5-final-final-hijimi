@@ -2,29 +2,23 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
-# 我们需要更彻底地patch app.py中的MongoDB相关部分
+# More comprehensive mocking of MongoDB
 @patch("api.app.client", autospec=True)
 @patch("api.app.db", autospec=True)
 def create_test_client(mock_db, mock_client):
-    # 先导入app，确保我们的mock生效
+    # Import app after patching
     from api.app import app
     
-    # 更详细的mock设置
-    # 确保client.admin.command('ping')能正常工作
+    # Set up admin mock for ping tests
     mock_admin = MagicMock()
     mock_admin.command.return_value = {"ok": 1}
     mock_client.admin = mock_admin
     
-    # 确保db.products.find()能正常工作
-    mock_products_collection = MagicMock()
-    mock_db.products = mock_products_collection
+    # Set up collections
+    mock_db.products = MagicMock()
     
-    # 确保db.get_database()返回db自身
+    # Ensure db.get_database() returns itself
     mock_db.get_database.return_value = mock_db
-    
-    # 设置被查询的标志
-    mock_client.is_mongomock = True
-    mock_db.is_mongomock = True
     
     return TestClient(app), mock_db, mock_client
 
