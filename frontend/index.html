@@ -939,12 +939,19 @@
             else if (window.location.hostname === '143.244.170.102') {
                 return 'http://143.244.170.102:8000';
             }
+            else if (window.location.hostname === '157.230.6.28') {
+                return 'http://157.230.6.28:8000';
+            }
             // Fallback for any other host
             else {
                 // Try to use same host with different port
                 return `${window.location.protocol}//${window.location.hostname}:8000`;
             }
         })();
+        
+        // Add console log for debugging
+        console.log('Current hostname:', window.location.hostname);
+        console.log('API Base URL:', API_BASE_URL);
         
         // DOM elements
         const userIdInput = document.getElementById('userId');
@@ -1228,14 +1235,20 @@
             recommendationsContainer.classList.add('hidden');
             recommendationError.classList.add('hidden');
             loadingRecommendations.classList.remove('hidden');
+            
+            // API URL with fallback
+            const apiUrl = `${API_BASE_URL}/recommendations/${userId}`;
+            console.log('Fetching recommendations from:', apiUrl);
 
             try {
-                const response = await fetch(`${API_BASE_URL}/recommendations/${userId}`);
+                const response = await fetch(apiUrl);
                 if (!response.ok) {
+                    console.error('API response not OK:', response.status, response.statusText);
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
                 
                 const data = await response.json();
+                console.log('Received recommendations data:', data);
                 
                 // Hide loading state
                 loadingRecommendations.classList.add('hidden');
@@ -1259,6 +1272,42 @@
                 }
             } catch (error) {
                 console.error('Error fetching recommendations:', error);
+                
+                // If API_BASE_URL might be wrong, try direct IP as fallback
+                try {
+                    console.log('Trying fallback API URL');
+                    const fallbackUrl = `http://157.230.6.28:8000/recommendations/${userId}`;
+                    console.log('Fetching from fallback URL:', fallbackUrl);
+                    
+                    const fallbackResponse = await fetch(fallbackUrl);
+                    if (!fallbackResponse.ok) {
+                        throw new Error(`Fallback HTTP error! status: ${fallbackResponse.status}`);
+                    }
+                    
+                    const fallbackData = await fallbackResponse.json();
+                    console.log('Received fallback data:', fallbackData);
+                    
+                    // Hide loading state
+                    loadingRecommendations.classList.add('hidden');
+                    
+                    // Clear previous recommendations
+                    recommendationsList.innerHTML = '';
+                    
+                    if (fallbackData.recommendations && fallbackData.recommendations.length > 0) {
+                        fallbackData.recommendations.forEach((product, index) => {
+                            setTimeout(() => {
+                                const card = createProductCard(product);
+                                card.style.animationDelay = `${index * 0.1}s`;
+                                recommendationsList.appendChild(card);
+                            }, index * 50);
+                        });
+                        recommendationsContainer.classList.remove('hidden');
+                        return;
+                    }
+                } catch (fallbackError) {
+                    console.error('Fallback error:', fallbackError);
+                }
+                
                 loadingRecommendations.classList.add('hidden');
                 recommendationErrorText.textContent = 'Failed to load recommendations. Please try again.';
                 recommendationError.classList.remove('hidden');
@@ -1275,12 +1324,20 @@ async function fetchAllProducts() {
         productError.classList.add('hidden');
         loadingProducts.classList.remove('hidden');
 
+        // API URL with fallback
+        const apiUrl = `${API_BASE_URL}/products`;
+        console.log('Fetching products from:', apiUrl);
+
         try {
-            const response = await fetch(`${API_BASE_URL}/products`);
+            const response = await fetch(apiUrl);
             if (!response.ok) {
+                console.error('API response not OK:', response.status, response.statusText);
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
+            
             allProducts = await response.json();
+            console.log(`Received ${allProducts.length} products`);
+            
             loadingProducts.classList.add('hidden');
             productsList.innerHTML = '';
             productsDisplayed = 0;
@@ -1294,6 +1351,34 @@ async function fetchAllProducts() {
             }
         } catch (error) {
             console.error('Error fetching products:', error);
+            
+            // If API_BASE_URL might be wrong, try direct IP as fallback
+            try {
+                console.log('Trying fallback API URL');
+                const fallbackUrl = `http://157.230.6.28:8000/products`;
+                console.log('Fetching from fallback URL:', fallbackUrl);
+                
+                const fallbackResponse = await fetch(fallbackUrl);
+                if (!fallbackResponse.ok) {
+                    throw new Error(`Fallback HTTP error! status: ${fallbackResponse.status}`);
+                }
+                
+                allProducts = await fallbackResponse.json();
+                console.log(`Received ${allProducts.length} products from fallback`);
+                
+                loadingProducts.classList.add('hidden');
+                productsList.innerHTML = '';
+                productsDisplayed = 0;
+                
+                if (allProducts.length > 0) {
+                    loadMoreProducts();
+                    productsContainer.classList.remove('hidden');
+                    return;
+                }
+            } catch (fallbackError) {
+                console.error('Fallback error:', fallbackError);
+            }
+            
             loadingProducts.classList.add('hidden');
             productErrorText.textContent = 'Failed to load products. Please try again.';
             productError.classList.remove('hidden');
