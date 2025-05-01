@@ -2,9 +2,9 @@ import pytest
 from fastapi.testclient import TestClient
 from unittest.mock import patch, MagicMock
 
-# More comprehensive mocking of MongoDB
-@patch("api.app.client", autospec=True)
-@patch("api.app.db", autospec=True)
+# Using regular patch instead of autospec to avoid connection attempts
+@patch("api.app.client")
+@patch("api.app.db")
 def create_test_client(mock_db, mock_client):
     # Import app after patching
     from api.app import app
@@ -15,10 +15,11 @@ def create_test_client(mock_db, mock_client):
     mock_client.admin = mock_admin
     
     # Set up collections
-    mock_db.products = MagicMock()
+    mock_products = MagicMock()
+    mock_db.products = mock_products
     
-    # Ensure db.get_database() returns itself
-    mock_db.get_database.return_value = mock_db
+    # Ensure no real connections are attempted
+    mock_client._topology = MagicMock()
     
     return TestClient(app), mock_db, mock_client
 
@@ -30,7 +31,7 @@ def test_read_root():
 
 def test_health_check():
     client, _, mock_client = create_test_client()
-    # 确保admin.command返回成功
+    # Ensure admin.command returns success
     mock_client.admin.command.return_value = {"ok": 1}
     
     response = client.get("/health")
@@ -40,26 +41,26 @@ def test_health_check():
 
 def test_health_check_failure():
     client, _, mock_client = create_test_client()
-    # 模拟连接失败
+    # Simulate connection failure
     mock_client.admin.command.side_effect = Exception("DB error")
     
     response = client.get("/health")
-    assert response.status_code == 200  # 健康检查endpoint总是返回200
+    assert response.status_code == 200  # Health check endpoint always returns 200
     assert response.json()["status"] == "error"
 
 def test_get_all_products():
     client, mock_db, _ = create_test_client()
     
-    # 设置products测试数据
+    # Set up products test data
     mock_products = [
         {"_id": "prod1", "name": "Product 1"},
         {"_id": "prod2", "name": "Product 2"}
     ]
     
-    # 更完整的mock链
-    mock_find = MagicMock()
-    mock_find.limit.return_value = mock_products
-    mock_db.products.find.return_value = mock_find
+    # More complete mock chain
+    mock_cursor = MagicMock()
+    mock_cursor.limit.return_value = mock_products
+    mock_db.products.find.return_value = mock_cursor
     
     response = client.get("/products?limit=2")
     assert response.status_code == 200
@@ -70,7 +71,7 @@ def test_get_all_products():
 def test_get_user_recommendations(mock_get_recommendations):
     client, *_ = create_test_client()
     
-    # 设置推荐测试数据
+    # Set up recommendation test data
     mock_get_recommendations.return_value = [
         {"_id": "prod1", "name": "Recommended Product"}
     ]
@@ -85,9 +86,9 @@ def test_get_user_recommendations(mock_get_recommendations):
 def test_get_user_recommendations_error(mock_get_recommendations):
     client, *_ = create_test_client()
     
-    # 模拟推荐引擎错误
+    # Simulate recommendation engine error
     mock_get_recommendations.side_effect = Exception("Recommendation error")
     
     response = client.get("/recommendations/testuser?limit=1")
-    assert response.status_code == 500  # app.py中应该是捕获异常并返回500
+    assert response.status_code == 500  # app.py should catch exceptions and return 500
     assert "Internal server error" in response.text
