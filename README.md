@@ -192,7 +192,7 @@ MONGO_URI=mongodb://localhost:27017/mydatabase uvicorn app:app --reload
 ```
 ## 🐳 Digital Ocean
 
-* [Digital Ocean](https://starfish-app-nwv2x.ondigitalocean.app/)
+* [Digital Ocean](http://157.230.6.28:8080/)
 
 ## 📊 How the Recommendation Engine Works
 
